@@ -1,20 +1,17 @@
 package com.guillot.game;
 
-import static com.guillot.game.Images.CEIL;
+import static com.guillot.engine.opengl.OpenGL.createTextureFromBuffer;
+import static com.guillot.engine.opengl.OpenGL.drawRectangle;
+import static com.guillot.game.Images.CEILING;
 import static com.guillot.game.Images.FLOOR;
-import static com.guillot.game.Images.PILLAR;
-import static com.guillot.game.Images.UNBREAKABLE;
-import static com.guillot.game.Images.WALL;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.floor;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
-import java.util.ArrayList;
-
 import org.jbox2d.common.Vec2;
-import org.newdawn.slick.Color;
+import org.lwjgl.util.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
@@ -22,7 +19,6 @@ import org.newdawn.slick.SlickException;
 import com.guillot.engine.Game;
 import com.guillot.engine.gui.GUI;
 import com.guillot.engine.gui.View;
-import com.guillot.engine.opengl.OpenGL;
 
 
 public class GameView extends View {
@@ -33,9 +29,7 @@ public class GameView extends View {
 
     public final static int TILE_SIZE = 64;
 
-    private Wall[][] map;
-
-    private ArrayList<Sprite> sprites;
+    private Map map;
 
     private Vec2 position;
 
@@ -43,37 +37,20 @@ public class GameView extends View {
 
     private Vec2 plane;
 
-    private byte[] buffer;
+    private ImageBuffer imageBuffer;
 
     private double[] zBuffer;
 
     @Override
     public void start() throws Exception {
-        setBackgroundColor(new Color(0.0f, 0.0f, 0.0f, 0.0f));
-
-        position = new Vec2(7f, 7.5f);
+        position = new Vec2(1.5f, 1.5f);
         direction = new Vec2(-1f, 0f);
         plane = new Vec2(0f, .66f);
 
-        buffer = new byte[SCREEN_WIDTH * SCREEN_HEIGHT * 4];
+        imageBuffer = new ImageBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, true);
         zBuffer = new double[SCREEN_WIDTH];
 
-        sprites = new ArrayList<>();
-        sprites.add(new Sprite(1.5f, 1.5f, PILLAR));
-        sprites.add(new Sprite(2.5f, 2.5f, PILLAR));
-        sprites.add(new Sprite(1.5f, 14.5f, PILLAR));
-        sprites.add(new Sprite(14.5f, 1.5f, PILLAR));
-        sprites.add(new Sprite(14.5f, 14.5f, PILLAR));
-
-        map = new Wall[16][16];
-        for (int i = 0; i < 16; i++) {
-            map[i][0] = new Wall(1, WALL);
-            map[0][i] = new Wall(1, WALL);
-            map[i][15] = new Wall(1, WALL);
-            map[15][i] = new Wall(1, WALL);
-        }
-
-        map[12][12] = new Wall(1, UNBREAKABLE);
+        map = new Map("01.map");
     }
 
     @Override
@@ -81,19 +58,19 @@ public class GameView extends View {
         super.update();
 
         if (GUI.get().getInput().isKeyDown(Input.KEY_Z)) {
-            if (map[(int) (position.x + direction.x * .01f)][(int) (position.y)] == null) {
+            if (map.getTile((int) (position.x + direction.x * .01f), (int) (position.y)) == null) {
                 position.x += direction.x * .01f;
             }
-            if (map[(int) (position.x)][(int) (position.y + direction.y * .01f)] == null) {
+            if (map.getTile((int) (position.x), (int) (position.y + direction.y * .01f)) == null) {
                 position.y += direction.y * .01f;
             }
         }
 
         if (GUI.get().getInput().isKeyDown(Input.KEY_S)) {
-            if (map[(int) (position.x - direction.x * .01f)][(int) (position.y)] == null) {
+            if (map.getTile((int) (position.x - direction.x * .01f), (int) (position.y)) == null) {
                 position.x -= direction.x * .01f;
             }
-            if (map[(int) (position.x)][(int) (position.y - direction.y * .01f)] == null) {
+            if (map.getTile((int) (position.x), (int) (position.y - direction.y * .01f)) == null) {
                 position.y -= direction.y * .01f;
             }
         }
@@ -159,13 +136,11 @@ public class GameView extends View {
                 floor.x += floorStepX;
                 floor.y += floorStepY;
 
-                buffer[SCREEN_WIDTH * 3 * y + x * 3] = FLOOR.getTextureData()[TILE_SIZE * 3 * ty + tx * 3];
-                buffer[SCREEN_WIDTH * 3 * y + x * 3 + 1] = FLOOR.getTextureData()[TILE_SIZE * 3 * ty + tx * 3 + 1];
-                buffer[SCREEN_WIDTH * 3 * y + x * 3 + 2] = FLOOR.getTextureData()[TILE_SIZE * 3 * ty + tx * 3 + 2];
+                Color floorColor = FLOOR.getPixel(tx, ty);
+                imageBuffer.setPixel(x, y, floorColor);
 
-                buffer[SCREEN_WIDTH * 3 * (SCREEN_HEIGHT - y - 1) + x * 3] = CEIL.getTextureData()[TILE_SIZE * 3 * ty + tx * 3];
-                buffer[SCREEN_WIDTH * 3 * (SCREEN_HEIGHT - y - 1) + x * 3 + 1] = CEIL.getTextureData()[TILE_SIZE * 3 * ty + tx * 3 + 1];
-                buffer[SCREEN_WIDTH * 3 * (SCREEN_HEIGHT - y - 1) + x * 3 + 2] = CEIL.getTextureData()[TILE_SIZE * 3 * ty + tx * 3 + 2];
+                Color ceilingColor = CEILING.getPixel(tx, ty);
+                imageBuffer.setPixel(x, SCREEN_HEIGHT - y - 1, ceilingColor);
             }
         }
 
@@ -223,7 +198,7 @@ public class GameView extends View {
                     side = 1;
                 }
 
-                wall = map[mapX][mapY];
+                wall = map.getTile(mapX, mapY);
             }
 
             // Calculate distance projected on camera direction (Euclidean distance will give fisheye effect!)
@@ -256,12 +231,12 @@ public class GameView extends View {
             wallX -= floor(wallX);
 
             // x coordinate on the texture
-            int texX = (int) (wallX * TILE_SIZE);
+            int tx = (int) (wallX * TILE_SIZE);
             if (side == 0 && rayDirection.x > 0) {
-                texX = TILE_SIZE - texX - 1;
+                tx = TILE_SIZE - tx - 1;
             }
             if (side == 1 && rayDirection.y < 0) {
-                texX = TILE_SIZE - texX - 1;
+                tx = TILE_SIZE - tx - 1;
             }
 
             // How much to increase the texture coordinate per screen pixel
@@ -270,23 +245,29 @@ public class GameView extends View {
             double texPos = (drawStart - SCREEN_HEIGHT / 2 + lineHeight / 2) * step;
             for (int y = drawStart; y < drawEnd; y++) {
                 // Cast the texture coordinate to integer, and mask with (texHeight - 1) in case of overflow
-                int texY = (int) texPos & (TILE_SIZE - 1);
+                int ty = (int) texPos & (TILE_SIZE - 1);
                 texPos += step;
 
-                buffer[SCREEN_WIDTH * 3 * y + x * 3] = wall.getTexture().getTextureData()[TILE_SIZE * 3 * texY + texX * 3];
-                buffer[SCREEN_WIDTH * 3 * y + x * 3 + 1] = wall.getTexture().getTextureData()[TILE_SIZE * 3 * texY + texX * 3 + 1];
-                buffer[SCREEN_WIDTH * 3 * y + x * 3 + 2] = wall.getTexture().getTextureData()[TILE_SIZE * 3 * texY + texX * 3 + 2];
+                Color wallColor = wall.getTexture().getPixel(tx, ty);
+                if (side == 1) {
+                    wallColor.set((wallColor.getRedByte() >> 1) & 8355711, (wallColor.getGreenByte() >> 1) & 8355711,
+                            (wallColor.getBlueByte() >> 1) & 8355711, wallColor.getAlphaByte());
+                }
+                imageBuffer.setPixel(x, y, wallColor);
             }
 
             zBuffer[x] = perpWallDist;
         }
 
+        int textureId = createTextureFromBuffer(imageBuffer.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT, imageBuffer.hasAlpha());
+        drawRectangle(0, SCREEN_HEIGHT * 2, SCREEN_WIDTH * 2, -SCREEN_HEIGHT * 2, textureId);
+
         // Sprite casting
-        sprites.sort((s1, s2) -> {
+        map.getSprites().sort((s1, s2) -> {
             return Double.compare(s2.distanceFrom(position), s1.distanceFrom(position));
         });
 
-        for (Sprite sprite : sprites) {
+        for (Sprite sprite : map.getSprites()) {
             // translate sprite position to relative to camera
             Vec2 sPosition = sprite.getPosition().sub(position);
 
@@ -324,24 +305,21 @@ public class GameView extends View {
             // loop through every vertical stripe of the sprite on screen
             for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
                 if (transformY > 0 && stripe > 0 && stripe < SCREEN_WIDTH && transformY < zBuffer[stripe]) {
-                    int texX = (stripe - (-spriteWidth / 2 + spriteScreenX)) * TILE_SIZE / spriteWidth;
+                    int tx = (stripe - (-spriteWidth / 2 + spriteScreenX)) * TILE_SIZE / spriteWidth;
 
                     for (int y = drawStartY; y < drawEndY; y++) {
                         int d = y - SCREEN_HEIGHT / 2 + spriteHeight / 2;
-                        int texY = (d * TILE_SIZE) / spriteHeight;
+                        int ty = (d * TILE_SIZE) / spriteHeight;
 
-                        buffer[SCREEN_WIDTH * 3 * y + stripe * 3] = sprite.getTexture().getTextureData()[TILE_SIZE * 4 * texY + texX * 4];
-                        buffer[SCREEN_WIDTH * 3 * y + stripe * 3 + 1] =
-                                sprite.getTexture().getTextureData()[TILE_SIZE * 4 * texY + texX * 4 + 1];
-                        buffer[SCREEN_WIDTH * 3 * y + stripe * 3 + 2] =
-                                sprite.getTexture().getTextureData()[TILE_SIZE * 4 * texY + texX * 4 + 2];
+                        Color spriteColor = sprite.getTexture().getPixel(tx, ty);
+                        imageBuffer.setPixel(stripe, y, spriteColor);
                     }
                 }
             }
         }
 
-        int textureId = OpenGL.createTextureFromBuffer(buffer, SCREEN_WIDTH, SCREEN_HEIGHT);
-        OpenGL.drawRectangle(0, SCREEN_HEIGHT * 2, SCREEN_WIDTH * 2, -SCREEN_HEIGHT * 2, textureId);
+        textureId = createTextureFromBuffer(imageBuffer.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT, imageBuffer.hasAlpha());
+        drawRectangle(0, SCREEN_HEIGHT * 2, SCREEN_WIDTH * 2, -SCREEN_HEIGHT * 2, textureId);
     }
 
     public static void main(String[] args) throws SlickException {
