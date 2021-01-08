@@ -94,6 +94,12 @@ public class GameView extends View {
             plane.x = (float) (plane.x * cos(-.01f) - plane.y * sin(-.01f));
             plane.y = (float) (oldPlaneX * sin(-.01f) + plane.y * cos(-.01f));
         }
+
+        if (GUI.get().isKeyPressed(Input.KEY_E)) {
+            map.getEntities().add(new Bomb(new Vec2(position)));
+        }
+
+        map.update();
     }
 
     @Override
@@ -263,13 +269,13 @@ public class GameView extends View {
         drawRectangle(0, SCREEN_HEIGHT * 2, SCREEN_WIDTH * 2, -SCREEN_HEIGHT * 2, textureId);
 
         // Sprite casting
-        map.getSprites().sort((s1, s2) -> {
+        map.getEntities().sort((s1, s2) -> {
             return Double.compare(s2.distanceFrom(position), s1.distanceFrom(position));
         });
 
-        for (Sprite sprite : map.getSprites()) {
+        for (Bomb entity : map.getEntities()) {
             // translate sprite position to relative to camera
-            Vec2 sPosition = sprite.getPosition().sub(position);
+            Vec2 sPosition = entity.getPosition().sub(position);
 
             // transform sprite with the inverse camera matrix
             float invDet = 1f / (plane.x * direction.y - direction.x * plane.y); // required for correct matrix multiplication
@@ -311,7 +317,7 @@ public class GameView extends View {
                         int d = y - SCREEN_HEIGHT / 2 + spriteHeight / 2;
                         int ty = (d * TILE_SIZE) / spriteHeight;
 
-                        Color spriteColor = sprite.getTexture().getPixel(tx, ty);
+                        Color spriteColor = entity.getSprite().getPixel(tx, ty);
                         imageBuffer.setPixel(stripe, y, spriteColor);
                     }
                 }

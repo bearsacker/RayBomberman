@@ -15,7 +15,7 @@ public class Map {
 
     private Wall[][] tiles;
 
-    private ArrayList<Sprite> sprites;
+    private ArrayList<Bomb> entities;
 
     public Map(String file) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -25,7 +25,7 @@ public class Map {
         width = lines.get(0).length();
         height = lines.size();
         tiles = new Wall[width][height];
-        sprites = new ArrayList<>();
+        entities = new ArrayList<>();
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -44,11 +44,15 @@ public class Map {
         }
     }
 
+    public void update() {
+        entities.forEach(x -> x.update());
+    }
+
     public Wall getTile(int x, int y) {
         return tiles[x][y];
     }
 
-    public ArrayList<Sprite> getSprites() {
-        return sprites;
+    public ArrayList<Bomb> getEntities() {
+        return entities;
     }
 }

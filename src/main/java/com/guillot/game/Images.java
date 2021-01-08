@@ -6,6 +6,7 @@ import org.newdawn.slick.SlickException;
 
 public enum Images {
     WALL("sprites/wall.png"), //
+    BOMB("sprites/bomb.png"), //
     FLOOR("sprites/floor.png"), //
     CEILING("sprites/ceil.png"), //
     UNBREAKABLE("sprites/unbreakable.png"), //
