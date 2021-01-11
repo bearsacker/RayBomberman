@@ -5,16 +5,14 @@ import static com.guillot.engine.opengl.OpenGL.drawRectangle;
 import static com.guillot.game.Images.CEILING;
 import static com.guillot.game.Images.FLOOR;
 import static java.lang.Math.abs;
-import static java.lang.Math.cos;
 import static java.lang.Math.floor;
-import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
 import org.jbox2d.common.Vec2;
 import org.lwjgl.util.Color;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.TextureImpl;
 
 import com.guillot.engine.Game;
 import com.guillot.engine.gui.GUI;
@@ -31,11 +29,7 @@ public class GameView extends View {
 
     private Map map;
 
-    private Vec2 position;
-
-    private Vec2 direction;
-
-    private Vec2 plane;
+    private Player player;
 
     private ImageBuffer imageBuffer;
 
@@ -43,13 +37,10 @@ public class GameView extends View {
 
     @Override
     public void start() throws Exception {
-        position = new Vec2(1.5f, 1.5f);
-        direction = new Vec2(-1f, 0f);
-        plane = new Vec2(0f, .66f);
-
         imageBuffer = new ImageBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, true);
         zBuffer = new double[SCREEN_WIDTH];
 
+        player = new Player();
         map = new Map("01.map");
     }
 
@@ -57,48 +48,7 @@ public class GameView extends View {
     public void update() throws Exception {
         super.update();
 
-        if (GUI.get().getInput().isKeyDown(Input.KEY_Z)) {
-            if (map.getTile((int) (position.x + direction.x * .01f), (int) (position.y)) == null) {
-                position.x += direction.x * .01f;
-            }
-            if (map.getTile((int) (position.x), (int) (position.y + direction.y * .01f)) == null) {
-                position.y += direction.y * .01f;
-            }
-        }
-
-        if (GUI.get().getInput().isKeyDown(Input.KEY_S)) {
-            if (map.getTile((int) (position.x - direction.x * .01f), (int) (position.y)) == null) {
-                position.x -= direction.x * .01f;
-            }
-            if (map.getTile((int) (position.x), (int) (position.y - direction.y * .01f)) == null) {
-                position.y -= direction.y * .01f;
-            }
-        }
-
-        if (GUI.get().getInput().isKeyDown(Input.KEY_Q)) {
-            float oldDirX = direction.x;
-            direction.x = (float) (direction.x * cos(.01f) - direction.y * sin(.01f));
-            direction.y = (float) (oldDirX * sin(.01f) + direction.y * cos(.01f));
-
-            float oldPlaneX = plane.x;
-            plane.x = (float) (plane.x * cos(.01f) - plane.y * sin(.01f));
-            plane.y = (float) (oldPlaneX * sin(.01f) + plane.y * cos(.01f));
-        }
-
-        if (GUI.get().getInput().isKeyDown(Input.KEY_D)) {
-            float oldDirX = direction.x;
-            direction.x = (float) (direction.x * cos(-.01f) - direction.y * sin(-.01f));
-            direction.y = (float) (oldDirX * sin(-.01f) + direction.y * cos(-.01f));
-
-            float oldPlaneX = plane.x;
-            plane.x = (float) (plane.x * cos(-.01f) - plane.y * sin(-.01f));
-            plane.y = (float) (oldPlaneX * sin(-.01f) + plane.y * cos(-.01f));
-        }
-
-        if (GUI.get().isKeyPressed(Input.KEY_E)) {
-            map.getEntities().add(new Bomb(new Vec2(position)));
-        }
-
+        player.update(map);
         map.update();
     }
 
@@ -109,8 +59,8 @@ public class GameView extends View {
         // Floor casting
         for (int y = 0; y < SCREEN_HEIGHT; y++) {
             // rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
-            Vec2 rayDirection0 = direction.sub(plane);
-            Vec2 rayDirection1 = direction.add(plane);
+            Vec2 rayDirection0 = player.getDirection().sub(player.getPlane());
+            Vec2 rayDirection1 = player.getDirection().add(player.getPlane());
 
             // Current y position compared to the center of the screen (the horizon)
             int p = y - SCREEN_HEIGHT / 2;
@@ -128,7 +78,7 @@ public class GameView extends View {
             float floorStepY = rowDistance * (rayDirection1.y - rayDirection0.y) / SCREEN_WIDTH;
 
             // real world coordinates of the leftmost column. This will be updated as we step to the right.
-            Vec2 floor = rayDirection0.mul(rowDistance).add(position);
+            Vec2 floor = rayDirection0.mul(rowDistance).add(player.getPosition());
 
             for (int x = 0; x < SCREEN_WIDTH; ++x) {
                 // the cell coord is simply got from the integer parts of floorX and floorY
@@ -154,11 +104,11 @@ public class GameView extends View {
         for (int x = 0; x < SCREEN_WIDTH; x++) {
             // calculate ray position and direction
             float cameraX = 2 * x / (float) SCREEN_WIDTH - 1; // x-coordinate in camera space
-            Vec2 rayDirection = new Vec2(plane.mul(cameraX).add(direction));
+            Vec2 rayDirection = new Vec2(player.getPlane().mul(cameraX).add(player.getDirection()));
 
             // which box of the map we're in
-            int mapX = (int) position.x;
-            int mapY = (int) position.y;
+            int mapX = (int) player.getPosition().x;
+            int mapY = (int) player.getPosition().y;
 
             // length of ray from current position to next x or y-side
             double sideDistX;
@@ -176,17 +126,17 @@ public class GameView extends View {
             // calculate step and initial sideDist
             if (rayDirection.x < 0) {
                 stepX = -1;
-                sideDistX = (position.x - mapX) * deltaDistX;
+                sideDistX = (player.getPosition().x - mapX) * deltaDistX;
             } else {
                 stepX = 1;
-                sideDistX = (mapX + 1.0 - position.x) * deltaDistX;
+                sideDistX = (mapX + 1.0 - player.getPosition().x) * deltaDistX;
             }
             if (rayDirection.y < 0) {
                 stepY = -1;
-                sideDistY = (position.y - mapY) * deltaDistY;
+                sideDistY = (player.getPosition().y - mapY) * deltaDistY;
             } else {
                 stepY = 1;
-                sideDistY = (mapY + 1.0 - position.y) * deltaDistY;
+                sideDistY = (mapY + 1.0 - player.getPosition().y) * deltaDistY;
             }
 
             // perform DDA
@@ -209,9 +159,9 @@ public class GameView extends View {
 
             // Calculate distance projected on camera direction (Euclidean distance will give fisheye effect!)
             if (side == 0) {
-                perpWallDist = (mapX - position.x + (1 - stepX) / 2) / rayDirection.x;
+                perpWallDist = (mapX - player.getPosition().x + (1 - stepX) / 2) / rayDirection.x;
             } else {
-                perpWallDist = (mapY - position.y + (1 - stepY) / 2) / rayDirection.y;
+                perpWallDist = (mapY - player.getPosition().y + (1 - stepY) / 2) / rayDirection.y;
             }
 
             // Calculate height of line to draw on screen
@@ -230,9 +180,9 @@ public class GameView extends View {
             // calculate value of wallX
             float wallX;
             if (side == 0) {
-                wallX = (float) (position.y + perpWallDist * rayDirection.y);
+                wallX = (float) (player.getPosition().y + perpWallDist * rayDirection.y);
             } else {
-                wallX = (float) (position.x + perpWallDist * rayDirection.x);
+                wallX = (float) (player.getPosition().x + perpWallDist * rayDirection.x);
             }
             wallX -= floor(wallX);
 
@@ -266,23 +216,22 @@ public class GameView extends View {
         }
 
         int textureId = createTextureFromBuffer(imageBuffer.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT, imageBuffer.hasAlpha());
-        drawRectangle(0, SCREEN_HEIGHT * 2, SCREEN_WIDTH * 2, -SCREEN_HEIGHT * 2, textureId);
+        drawRectangle(0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, textureId);
 
         // Sprite casting
         map.getEntities().sort((s1, s2) -> {
-            return Double.compare(s2.distanceFrom(position), s1.distanceFrom(position));
+            return Double.compare(s2.distanceFrom(player.getPosition()), s1.distanceFrom(player.getPosition()));
         });
 
-        for (Bomb entity : map.getEntities()) {
+        for (Entity entity : map.getEntities()) {
             // translate sprite position to relative to camera
-            Vec2 sPosition = entity.getPosition().sub(position);
+            Vec2 sPosition = entity.getPosition().sub(player.getPosition());
 
             // transform sprite with the inverse camera matrix
-            float invDet = 1f / (plane.x * direction.y - direction.x * plane.y); // required for correct matrix multiplication
+            float invDet = 1f / (player.getPlane().x * player.getDirection().y - player.getDirection().x * player.getPlane().y);
 
-            float transformX = invDet * (direction.y * sPosition.x - direction.x * sPosition.y);
-            float transformY = invDet * (-plane.y * sPosition.x + plane.x * sPosition.y); // this is actually the depth inside the
-                                                                                          // screen, that what Z is in 3D
+            float transformX = invDet * (player.getDirection().y * sPosition.x - player.getDirection().x * sPosition.y);
+            float transformY = invDet * (-player.getPlane().y * sPosition.x + player.getPlane().x * sPosition.y);
 
             int spriteScreenX = (int) ((SCREEN_WIDTH / 2) * (1 + transformX / transformY));
 
@@ -325,7 +274,12 @@ public class GameView extends View {
         }
 
         textureId = createTextureFromBuffer(imageBuffer.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT, imageBuffer.hasAlpha());
-        drawRectangle(0, SCREEN_HEIGHT * 2, SCREEN_WIDTH * 2, -SCREEN_HEIGHT * 2, textureId);
+        drawRectangle(0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, textureId);
+
+        TextureImpl.bindNone();
+
+        g.setColor(org.newdawn.slick.Color.white);
+        GUI.get().getFont().drawString(10, 30, Integer.toString(player.getBombs()));
     }
 
     public static void main(String[] args) throws SlickException {
