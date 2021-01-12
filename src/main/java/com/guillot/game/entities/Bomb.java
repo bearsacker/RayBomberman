@@ -43,7 +43,7 @@ public class Bomb extends Entity {
     public void explode(Map map) {
         map.pushEvent(new AddExplosion(position, range, owner.hasPowerBomb(), owner.hasRedBomb()));
         exploded = true;
-        owner.incrementBombs();
+        owner.retrieveBomb();
     }
 
 }

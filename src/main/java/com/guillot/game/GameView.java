@@ -174,8 +174,8 @@ public class GameView extends View {
                 drawStart = 0;
             }
             int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
-            if (drawEnd >= SCREEN_HEIGHT) {
-                drawEnd = SCREEN_HEIGHT - 1;
+            if (drawEnd > SCREEN_HEIGHT) {
+                drawEnd = SCREEN_HEIGHT;
             }
 
             // calculate value of wallX
@@ -216,9 +216,6 @@ public class GameView extends View {
             zBuffer[x] = perpWallDist;
         }
 
-        int textureId = createTextureFromBuffer(imageBuffer.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT, imageBuffer.hasAlpha());
-        drawRectangle(0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, textureId);
-
         // Sprite casting
         map.getEntities().sort((s1, s2) -> {
             return Double.compare(s2.distanceFrom(player.getPosition()), s1.distanceFrom(player.getPosition()));
@@ -244,8 +241,8 @@ public class GameView extends View {
                 drawStartY = 0;
             }
             int drawEndY = spriteHeight / 2 + SCREEN_HEIGHT / 2;
-            if (drawEndY >= SCREEN_HEIGHT) {
-                drawEndY = SCREEN_HEIGHT - 1;
+            if (drawEndY > SCREEN_HEIGHT) {
+                drawEndY = SCREEN_HEIGHT;
             }
 
             int spriteWidth = (int) abs(SCREEN_HEIGHT / (transformY));
@@ -254,8 +251,8 @@ public class GameView extends View {
                 drawStartX = 0;
             }
             int drawEndX = spriteWidth / 2 + spriteScreenX;
-            if (drawEndX >= SCREEN_WIDTH) {
-                drawEndX = SCREEN_WIDTH - 1;
+            if (drawEndX > SCREEN_WIDTH) {
+                drawEndX = SCREEN_WIDTH;
             }
 
             // loop through every vertical stripe of the sprite on screen
@@ -268,13 +265,13 @@ public class GameView extends View {
                         int ty = (d * TILE_SIZE) / spriteHeight;
 
                         Color spriteColor = entity.getSprite().getPixel(tx, ty);
-                        imageBuffer.setPixel(stripe, y, spriteColor);
+                        imageBuffer.addToPixel(stripe, y, spriteColor);
                     }
                 }
             }
         }
 
-        textureId = createTextureFromBuffer(imageBuffer.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT, imageBuffer.hasAlpha());
+        int textureId = createTextureFromBuffer(imageBuffer.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT, imageBuffer.hasAlpha());
         drawRectangle(0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, textureId);
 
         TextureImpl.bindNone();

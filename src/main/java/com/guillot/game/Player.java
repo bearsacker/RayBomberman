@@ -20,7 +20,7 @@ import com.guillot.game.items.Item;
 
 public class Player {
 
-    public final static float SPEED_MIN = .2f;
+    public final static float SPEED_MIN = 4f;
 
     private Vec2 position;
 
@@ -42,18 +42,26 @@ public class Player {
 
     private boolean hasGlove;
 
+    private long lastUpdate;
+
     public Player() {
         position = new Vec2(1.5f, 1.5f);
         direction = new Vec2(-1f, 0f);
         plane = new Vec2(0f, .66f);
 
-        speed = .01f;
+        speed = SPEED_MIN;
         availableBombs = 1;
         bombs = 1;
         bombRange = 1;
     }
 
     public void update(Map map) {
+        long time = System.currentTimeMillis();
+        float frameTime = (time - lastUpdate) / 1000f;
+        lastUpdate = time;
+
+        float moveSpeed = frameTime * speed;
+
         List<Entity> entities = map.getEntitiesAt(position);
         for (Entity entity : entities) {
             if (entity instanceof Fire) {
@@ -64,20 +72,20 @@ public class Player {
         }
 
         if (GUI.get().getInput().isKeyDown(KEY_Z)) {
-            if (map.getTile((int) (position.x + direction.x * speed), (int) (position.y)) == null) {
-                position.x += direction.x * speed;
+            if (map.getTile((int) (position.x + direction.x * moveSpeed), (int) (position.y)) == null) {
+                position.x += direction.x * moveSpeed;
             }
-            if (map.getTile((int) (position.x), (int) (position.y + direction.y * speed)) == null) {
-                position.y += direction.y * speed;
+            if (map.getTile((int) (position.x), (int) (position.y + direction.y * moveSpeed)) == null) {
+                position.y += direction.y * moveSpeed;
             }
         }
 
         if (GUI.get().getInput().isKeyDown(KEY_S)) {
-            if (map.getTile((int) (position.x - direction.x * speed), (int) (position.y)) == null) {
-                position.x -= direction.x * speed;
+            if (map.getTile((int) (position.x - direction.x * moveSpeed), (int) (position.y)) == null) {
+                position.x -= direction.x * moveSpeed;
             }
-            if (map.getTile((int) (position.x), (int) (position.y - direction.y * speed)) == null) {
-                position.y -= direction.y * speed;
+            if (map.getTile((int) (position.x), (int) (position.y - direction.y * moveSpeed)) == null) {
+                position.y -= direction.y * moveSpeed;
             }
         }
 
@@ -102,7 +110,7 @@ public class Player {
         }
 
         if (GUI.get().isKeyPressed(KEY_E) && bombs > 0) {
-            decrementBombs();
+            bombs--;
             map.getEntities().add(new Bomb(this, new Vec2(position), bombRange));
         }
     }
@@ -155,18 +163,22 @@ public class Player {
         }
     }
 
+    public void retrieveBomb() {
+        bombs++;
+    }
+
     public void incrementRange() {
         bombRange++;
     }
 
     public void decrementSpeed() {
         if (speed > SPEED_MIN) {
-            speed -= .01f;
+            speed -= SPEED_MIN / 2f;
         }
     }
 
     public void incrementSpeed() {
-        speed += .01f;
+        speed += SPEED_MIN / 2f;
     }
 
     public Vec2 getPosition() {
