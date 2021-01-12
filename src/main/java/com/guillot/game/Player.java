@@ -26,6 +26,12 @@ public class Player {
 
     private float speed;
 
+    private boolean hasRedBomb;
+
+    private boolean hasPowerBomb;
+
+    private boolean hasGlove;
+
     public Player() {
         position = new Vec2(1.5f, 1.5f);
         direction = new Vec2(-1f, 0f);
@@ -79,6 +85,18 @@ public class Player {
             decrementBombs();
             map.getEntities().add(new Bomb(this, new Vec2(position), bombRange));
         }
+    }
+
+    public boolean hasRedBomb() {
+        return hasRedBomb;
+    }
+
+    public boolean hasPowerBomb() {
+        return hasPowerBomb;
+    }
+
+    public boolean hasGlove() {
+        return hasGlove;
     }
 
     public int getBombs() {

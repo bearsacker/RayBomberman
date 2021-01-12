@@ -6,9 +6,12 @@ public class Wall {
 
     private Images texture;
 
-    public Wall(double height, Images texture) {
+    private boolean breakable;
+
+    public Wall(double height, Images texture, boolean breakable) {
         this.height = height;
         this.texture = texture;
+        this.breakable = breakable;
     }
 
     public double getHeight() {
@@ -26,4 +29,13 @@ public class Wall {
     public void setTexture(Images texture) {
         this.texture = texture;
     }
+
+    public boolean isBreakable() {
+        return breakable;
+    }
+
+    public void setBreakable(boolean breakable) {
+        this.breakable = breakable;
+    }
+
 }

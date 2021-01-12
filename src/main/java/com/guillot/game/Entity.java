@@ -10,7 +10,7 @@ public abstract class Entity {
 
     public Entity(Images sprite, Vec2 position) {
         this.sprite = sprite;
-        this.position = position;
+        this.position = new Vec2(((int) position.x) + .5f, ((int) position.y) + .5f);
     }
 
     public double distanceFrom(Vec2 point) {

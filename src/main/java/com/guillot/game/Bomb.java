@@ -26,15 +26,19 @@ public class Bomb extends Entity {
     @Override
     public void update(Map map) {
         if (System.currentTimeMillis() - time > TIME_BEFORE_EXPLODE) {
-            map.placeExplosion(position, range);
-            exploded = true;
-            owner.incrementBombs();
+            explode(map);
         }
     }
 
     @Override
     public boolean isToRemove() {
         return exploded;
+    }
+
+    public void explode(Map map) {
+        map.pushEvent(new AddExplosion(position, range));
+        exploded = true;
+        owner.incrementBombs();
     }
 
 }
