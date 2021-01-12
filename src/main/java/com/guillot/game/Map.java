@@ -11,7 +11,16 @@ import java.util.stream.Collectors;
 
 import org.jbox2d.common.Vec2;
 
+import com.guillot.engine.utils.NumberGenerator;
+import com.guillot.game.entities.Entity;
+import com.guillot.game.events.AddItem;
+import com.guillot.game.events.Event;
+
 public class Map {
+
+    public final static int MAX_RANGE = 24;
+
+    public final static float PROBABILITY_ITEM_GENERATION = 1f;
 
     private int width;
 
@@ -68,19 +77,36 @@ public class Map {
     }
 
     public Wall getTile(int x, int y) {
+        if (x < 0 || y < 0 || x >= width || y >= height) {
+            return null;
+        }
+
         return tiles[x][y];
     }
 
     public Wall getTile(Vec2 position) {
+        if (position.x < 0 || position.y < 0 || position.x >= width || position.y >= height) {
+            return null;
+        }
+
         return tiles[(int) position.x][(int) position.y];
     }
 
-    public void setTile(Vec2 position, Wall value) {
-        tiles[(int) position.x][(int) position.y] = value;
+    public void breakWall(Vec2 position) {
+        tiles[(int) position.x][(int) position.y] = null;
+        if (NumberGenerator.get().randomDouble() < PROBABILITY_ITEM_GENERATION) {
+            pushEvent(new AddItem(position));
+        }
     }
 
     public ArrayList<Entity> getEntities() {
         return entities;
+    }
+
+    public List<Entity> getEntitiesAt(Vec2 position) {
+        return entities.stream()
+                .filter(x -> ((int) x.getPosition().x) == ((int) position.x) && ((int) x.getPosition().y) == ((int) position.y))
+                .collect(Collectors.toList());
     }
 
     public void pushEvent(Event event) {

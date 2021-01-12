@@ -1,6 +1,9 @@
-package com.guillot.game;
+package com.guillot.game.entities;
 
 import org.jbox2d.common.Vec2;
+
+import com.guillot.game.Images;
+import com.guillot.game.Map;
 
 public abstract class Entity {
 
@@ -25,8 +28,8 @@ public abstract class Entity {
         return sprite;
     }
 
-    abstract void update(Map map);
+    public abstract void update(Map map);
 
-    abstract boolean isToRemove();
+    public abstract boolean isToRemove();
 
 }

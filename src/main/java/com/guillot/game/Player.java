@@ -8,11 +8,19 @@ import static org.newdawn.slick.Input.KEY_Q;
 import static org.newdawn.slick.Input.KEY_S;
 import static org.newdawn.slick.Input.KEY_Z;
 
+import java.util.List;
+
 import org.jbox2d.common.Vec2;
 
 import com.guillot.engine.gui.GUI;
+import com.guillot.game.entities.Bomb;
+import com.guillot.game.entities.Entity;
+import com.guillot.game.entities.Fire;
+import com.guillot.game.items.Item;
 
 public class Player {
+
+    public final static float SPEED_MIN = .2f;
 
     private Vec2 position;
 
@@ -21,6 +29,8 @@ public class Player {
     private Vec2 plane;
 
     private int bombs;
+
+    private int availableBombs;
 
     private int bombRange;
 
@@ -38,25 +48,35 @@ public class Player {
         plane = new Vec2(0f, .66f);
 
         speed = .01f;
+        availableBombs = 1;
         bombs = 1;
         bombRange = 1;
     }
 
     public void update(Map map) {
+        List<Entity> entities = map.getEntitiesAt(position);
+        for (Entity entity : entities) {
+            if (entity instanceof Fire) {
+                // TODO Death
+            } else if (entity instanceof Item) {
+                ((Item) entity).use(this);
+            }
+        }
+
         if (GUI.get().getInput().isKeyDown(KEY_Z)) {
-            if (map.getTile((int) (position.x + direction.x * speed * 20f), (int) (position.y)) == null) {
+            if (map.getTile((int) (position.x + direction.x * speed), (int) (position.y)) == null) {
                 position.x += direction.x * speed;
             }
-            if (map.getTile((int) (position.x), (int) (position.y + direction.y * speed * 20f)) == null) {
+            if (map.getTile((int) (position.x), (int) (position.y + direction.y * speed)) == null) {
                 position.y += direction.y * speed;
             }
         }
 
         if (GUI.get().getInput().isKeyDown(KEY_S)) {
-            if (map.getTile((int) (position.x - direction.x * speed * 20f), (int) (position.y)) == null) {
+            if (map.getTile((int) (position.x - direction.x * speed), (int) (position.y)) == null) {
                 position.x -= direction.x * speed;
             }
-            if (map.getTile((int) (position.x), (int) (position.y - direction.y * speed * 20f)) == null) {
+            if (map.getTile((int) (position.x), (int) (position.y - direction.y * speed)) == null) {
                 position.y -= direction.y * speed;
             }
         }
@@ -87,12 +107,24 @@ public class Player {
         }
     }
 
+    public void pickUpRedBomb() {
+        hasRedBomb = true;
+    }
+
     public boolean hasRedBomb() {
         return hasRedBomb;
     }
 
+    public void pickUpPowerBomb() {
+        hasPowerBomb = true;
+    }
+
     public boolean hasPowerBomb() {
         return hasPowerBomb;
+    }
+
+    public void pickUpGlove() {
+        hasGlove = true;
     }
 
     public boolean hasGlove() {
@@ -104,11 +136,37 @@ public class Player {
     }
 
     public void decrementBombs() {
-        bombs--;
+        if (availableBombs > 1) {
+            availableBombs--;
+            if (bombs > 0) {
+                bombs--;
+            }
+        }
     }
 
     public void incrementBombs() {
+        availableBombs++;
         bombs++;
+    }
+
+    public void decrementRange() {
+        if (bombRange > 1) {
+            bombRange--;
+        }
+    }
+
+    public void incrementRange() {
+        bombRange++;
+    }
+
+    public void decrementSpeed() {
+        if (speed > SPEED_MIN) {
+            speed -= .01f;
+        }
+    }
+
+    public void incrementSpeed() {
+        speed += .01f;
     }
 
     public Vec2 getPosition() {

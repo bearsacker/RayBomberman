@@ -5,6 +5,16 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 public enum Images {
+    ITEM_BOMB_BONUS("sprites/item_bomb_bonus.png"), //
+    ITEM_BOMB_MALUS("sprites/item_bomb_malus.png"), //
+    ITEM_RANGE_BONUS("sprites/item_range_bonus.png"), //
+    ITEM_RANGE_MALUS("sprites/item_range_malus.png"), //
+    ITEM_SPEED_BONUS("sprites/item_speed_bonus.png"), //
+    ITEM_SPEED_MALUS("sprites/item_speed_malus.png"), //
+    ITEM_REDBOMB("sprites/item_redbomb.png"), //
+    ITEM_POWERBOMB("sprites/item_powerbomb.png"), //
+    ITEM_GLOVE("sprites/item_glove.png"), //
+
     WALL("sprites/wall.png"), //
     BOMB("sprites/bomb.png"), //
     FIRE("sprites/fire.png"), //

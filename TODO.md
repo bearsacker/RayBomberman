@@ -1,7 +1,4 @@
 Features:
- - Item generation
- - Item effect (bonus/malus)
- - Red bomb and power bomb
  - Glove
  - Death
  - Movement with time
@@ -9,7 +6,8 @@ Features:
  - Sounds
  - Menu
  - HUD
+ - Constant into config file
 
-Fix:
+Issues:
  - Sprite display
  - Last screen line without wall

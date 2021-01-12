@@ -1,6 +1,9 @@
-package com.guillot.game;
+package com.guillot.game.entities;
 
 import org.jbox2d.common.Vec2;
+
+import com.guillot.game.Images;
+import com.guillot.game.Map;
 
 public class Fire extends Entity {
 

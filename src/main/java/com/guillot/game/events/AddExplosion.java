@@ -1,6 +1,10 @@
-package com.guillot.game;
+package com.guillot.game.events;
 
 import org.jbox2d.common.Vec2;
+
+import com.guillot.game.Map;
+import com.guillot.game.Wall;
+import com.guillot.game.entities.Fire;
 
 public class AddExplosion implements Event {
 
@@ -8,13 +12,23 @@ public class AddExplosion implements Event {
 
     private int range;
 
-    public AddExplosion(Vec2 position, int range) {
+    private boolean isPowerBomb;
+
+    private boolean isRedBomb;
+
+    public AddExplosion(Vec2 position, int range, boolean isPowerBomb, boolean isRedBomb) {
         this.position = position;
         this.range = range;
+        this.isPowerBomb = isPowerBomb;
+        this.isRedBomb = isRedBomb;
     }
 
     @Override
     public void perform(Map map) {
+        if (isPowerBomb) {
+            range = Map.MAX_RANGE;
+        }
+
         for (int x = 0; x <= range; x++) {
             Vec2 p = new Vec2(position.x + x, position.y);
             map.getEntities().add(new Fire(p));
@@ -22,10 +36,14 @@ public class AddExplosion implements Event {
             Wall wall = map.getTile(p);
             if (wall != null) {
                 if (wall.isBreakable()) {
-                    map.setTile(p, null);
-                }
+                    map.breakWall(p);
 
-                break;
+                    if (!isRedBomb) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
             }
         }
 
@@ -36,10 +54,14 @@ public class AddExplosion implements Event {
             Wall wall = map.getTile(p);
             if (wall != null) {
                 if (wall.isBreakable()) {
-                    map.setTile(p, null);
-                }
+                    map.breakWall(p);
 
-                break;
+                    if (!isRedBomb) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
             }
         }
 
@@ -50,10 +72,14 @@ public class AddExplosion implements Event {
             Wall wall = map.getTile(p);
             if (wall != null) {
                 if (wall.isBreakable()) {
-                    map.setTile(p, null);
-                }
+                    map.breakWall(p);
 
-                break;
+                    if (!isRedBomb) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
             }
         }
 
@@ -64,10 +90,14 @@ public class AddExplosion implements Event {
             Wall wall = map.getTile(p);
             if (wall != null) {
                 if (wall.isBreakable()) {
-                    map.setTile(p, null);
-                }
+                    map.breakWall(p);
 
-                break;
+                    if (!isRedBomb) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
             }
         }
     }

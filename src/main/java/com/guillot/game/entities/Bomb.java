@@ -1,10 +1,15 @@
-package com.guillot.game;
+package com.guillot.game.entities;
 
 import org.jbox2d.common.Vec2;
 
+import com.guillot.game.Images;
+import com.guillot.game.Map;
+import com.guillot.game.Player;
+import com.guillot.game.events.AddExplosion;
+
 public class Bomb extends Entity {
 
-    private final static int TIME_BEFORE_EXPLODE = 5000;
+    private final static int TIME_BEFORE_EXPLODE = 3000;
 
     private int range;
 
@@ -36,7 +41,7 @@ public class Bomb extends Entity {
     }
 
     public void explode(Map map) {
-        map.pushEvent(new AddExplosion(position, range));
+        map.pushEvent(new AddExplosion(position, range, owner.hasPowerBomb(), owner.hasRedBomb()));
         exploded = true;
         owner.incrementBombs();
     }

@@ -17,6 +17,7 @@ import org.newdawn.slick.opengl.TextureImpl;
 import com.guillot.engine.Game;
 import com.guillot.engine.gui.GUI;
 import com.guillot.engine.gui.View;
+import com.guillot.game.entities.Entity;
 
 
 public class GameView extends View {
