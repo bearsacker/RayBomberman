@@ -47,7 +47,7 @@ public class AddExplosion implements Event {
             }
         }
 
-        for (int x = -range; x <= 0; x++) {
+        for (int x = 0; x >= -range; x--) {
             Vec2 p = new Vec2(position.x + x, position.y);
             map.getEntities().add(new Fire(p));
 
@@ -83,7 +83,7 @@ public class AddExplosion implements Event {
             }
         }
 
-        for (int y = -range; y <= 0; y++) {
+        for (int y = 0; y >= -range; y--) {
             Vec2 p = new Vec2(position.x, position.y + y);
             map.getEntities().add(new Fire(p));
 
