@@ -2,8 +2,8 @@ package com.guillot.game.items;
 
 import org.jbox2d.common.Vec2;
 
-import com.guillot.game.Images;
 import com.guillot.game.Player;
+import com.guillot.game.resources.Images;
 
 public class GloveItem extends Item {
 

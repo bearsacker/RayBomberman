@@ -5,5 +5,4 @@ Features:
  - Sounds
  - Menu
  - HUD
- - Constant into config file
  - Camera with rotation

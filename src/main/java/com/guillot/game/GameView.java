@@ -2,8 +2,11 @@ package com.guillot.game;
 
 import static com.guillot.engine.opengl.OpenGL.createTextureFromBuffer;
 import static com.guillot.engine.opengl.OpenGL.drawRectangle;
-import static com.guillot.game.Images.CEILING;
-import static com.guillot.game.Images.FLOOR;
+import static com.guillot.game.configs.GameConfig.SCREEN_HEIGHT;
+import static com.guillot.game.configs.GameConfig.SCREEN_WIDTH;
+import static com.guillot.game.configs.GameConfig.TILE_SIZE;
+import static com.guillot.game.resources.Images.CEILING;
+import static com.guillot.game.resources.Images.FLOOR;
 import static java.lang.Math.abs;
 import static java.lang.Math.floor;
 import static java.lang.Math.sqrt;
@@ -21,12 +24,6 @@ import com.guillot.game.entities.Entity;
 
 
 public class GameView extends View {
-
-    public final static int SCREEN_WIDTH = 320;
-
-    public final static int SCREEN_HEIGHT = 200;
-
-    public final static int TILE_SIZE = 64;
 
     private Map map;
 

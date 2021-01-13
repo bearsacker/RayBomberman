@@ -1,5 +1,6 @@
 package com.guillot.game;
 
+import static com.guillot.game.configs.GameConfig.PLAYER_SPEED_MIN;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static org.newdawn.slick.Input.KEY_D;
@@ -19,8 +20,6 @@ import com.guillot.game.entities.Fire;
 import com.guillot.game.items.Item;
 
 public class Player {
-
-    public final static float SPEED_MIN = 4f;
 
     private Vec2 position;
 
@@ -49,7 +48,7 @@ public class Player {
         direction = new Vec2(-1f, 0f);
         plane = new Vec2(0f, .66f);
 
-        speed = SPEED_MIN;
+        speed = PLAYER_SPEED_MIN;
         availableBombs = 1;
         bombs = 1;
         bombRange = 1;
@@ -111,7 +110,7 @@ public class Player {
 
         if (GUI.get().isKeyPressed(KEY_E) && bombs > 0) {
             bombs--;
-            map.getEntities().add(new Bomb(this, new Vec2(position), bombRange));
+            map.getEntities().add(new Bomb(this, new Vec2(position), bombRange, hasRedBomb));
         }
     }
 
@@ -172,13 +171,13 @@ public class Player {
     }
 
     public void decrementSpeed() {
-        if (speed > SPEED_MIN) {
-            speed -= SPEED_MIN / 2f;
+        if (speed > PLAYER_SPEED_MIN) {
+            speed -= PLAYER_SPEED_MIN / 2f;
         }
     }
 
     public void incrementSpeed() {
-        speed += SPEED_MIN / 2f;
+        speed += PLAYER_SPEED_MIN / 2f;
     }
 
     public Vec2 getPosition() {

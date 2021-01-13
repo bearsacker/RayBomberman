@@ -1,4 +1,4 @@
-package com.guillot.game;
+package com.guillot.game.resources;
 
 import org.lwjgl.util.Color;
 import org.newdawn.slick.Image;
@@ -17,6 +17,7 @@ public enum Images {
 
     WALL("sprites/wall.png"), //
     BOMB("sprites/bomb.png"), //
+    REDBOMB("sprites/redbomb.png"), //
     FIRE("sprites/fire.png"), //
     FLOOR("sprites/floor.png"), //
     CEILING("sprites/ceil.png"), //

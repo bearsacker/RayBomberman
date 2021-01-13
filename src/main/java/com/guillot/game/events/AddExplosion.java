@@ -26,7 +26,7 @@ public class AddExplosion implements Event {
     @Override
     public void perform(Map map) {
         if (isPowerBomb) {
-            range = Map.MAX_RANGE;
+            range = Integer.MAX_VALUE;
         }
 
         for (int x = 0; x <= range; x++) {

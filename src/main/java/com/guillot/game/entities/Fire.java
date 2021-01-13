@@ -1,13 +1,13 @@
 package com.guillot.game.entities;
 
+import static com.guillot.game.configs.GameConfig.FIRE_TIME;
+
 import org.jbox2d.common.Vec2;
 
-import com.guillot.game.Images;
 import com.guillot.game.Map;
+import com.guillot.game.resources.Images;
 
 public class Fire extends Entity {
-
-    private final static int LIFETIME = 1000;
 
     private long time;
 
@@ -24,7 +24,7 @@ public class Fire extends Entity {
 
     @Override
     public boolean isToRemove() {
-        return System.currentTimeMillis() - time > LIFETIME;
+        return System.currentTimeMillis() - time > FIRE_TIME;
     }
 
 }

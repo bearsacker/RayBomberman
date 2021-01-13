@@ -1,5 +1,7 @@
 package com.guillot.game;
 
+import static com.guillot.game.configs.GameConfig.ITEM_PROBABILITY;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -15,12 +17,9 @@ import com.guillot.engine.utils.NumberGenerator;
 import com.guillot.game.entities.Entity;
 import com.guillot.game.events.AddItem;
 import com.guillot.game.events.Event;
+import com.guillot.game.resources.Images;
 
 public class Map {
-
-    public final static int MAX_RANGE = 24;
-
-    public final static float PROBABILITY_ITEM_GENERATION = 1f;
 
     private int width;
 
@@ -94,7 +93,7 @@ public class Map {
 
     public void breakWall(Vec2 position) {
         tiles[(int) position.x][(int) position.y] = null;
-        if (NumberGenerator.get().randomDouble() < PROBABILITY_ITEM_GENERATION) {
+        if (NumberGenerator.get().randomDouble() < ITEM_PROBABILITY) {
             pushEvent(new AddItem(position));
         }
     }

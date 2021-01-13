@@ -1,5 +1,7 @@
 package com.guillot.game;
 
+import com.guillot.game.resources.Images;
+
 public class Wall {
 
     private double height;

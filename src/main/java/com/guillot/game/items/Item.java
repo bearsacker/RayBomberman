@@ -2,10 +2,10 @@ package com.guillot.game.items;
 
 import org.jbox2d.common.Vec2;
 
-import com.guillot.game.Images;
 import com.guillot.game.Map;
 import com.guillot.game.Player;
 import com.guillot.game.entities.Entity;
+import com.guillot.game.resources.Images;
 
 public abstract class Item extends Entity {
 
