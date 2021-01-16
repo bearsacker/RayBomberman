@@ -8,6 +8,7 @@ import static org.newdawn.slick.Input.KEY_E;
 import static org.newdawn.slick.Input.KEY_Q;
 import static org.newdawn.slick.Input.KEY_S;
 import static org.newdawn.slick.Input.KEY_Z;
+import static org.newdawn.slick.Input.MOUSE_LEFT_BUTTON;
 
 import java.util.List;
 
@@ -40,6 +41,8 @@ public class Player {
     private boolean hasPowerBomb;
 
     private boolean hasGlove;
+
+    private boolean hiting;
 
     private long lastUpdate;
 
@@ -112,6 +115,8 @@ public class Player {
             bombs--;
             map.getEntities().add(new Bomb(this, new Vec2(position), bombRange, hasRedBomb));
         }
+
+        hiting = GUI.get().getInput().isMouseButtonDown(MOUSE_LEFT_BUTTON);
     }
 
     public void pickUpRedBomb() {
@@ -140,6 +145,14 @@ public class Player {
 
     public int getBombs() {
         return bombs;
+    }
+
+    public int getAvailableBombs() {
+        return availableBombs;
+    }
+
+    public int getBombRange() {
+        return bombRange;
     }
 
     public void decrementBombs() {
@@ -172,12 +185,12 @@ public class Player {
 
     public void decrementSpeed() {
         if (speed > PLAYER_SPEED_MIN) {
-            speed -= PLAYER_SPEED_MIN / 2f;
+            speed -= PLAYER_SPEED_MIN / 3f;
         }
     }
 
     public void incrementSpeed() {
-        speed += PLAYER_SPEED_MIN / 2f;
+        speed += PLAYER_SPEED_MIN / 3f;
     }
 
     public Vec2 getPosition() {
@@ -190,6 +203,10 @@ public class Player {
 
     public Vec2 getPlane() {
         return plane;
+    }
+
+    public boolean isHiting() {
+        return hiting;
     }
 
 }

@@ -15,6 +15,9 @@ public enum Images {
     ITEM_POWERBOMB("sprites/item_powerbomb.png"), //
     ITEM_GLOVE("sprites/item_glove.png"), //
 
+    HUD_RANGE("sprites/hud_range.png"), //
+    HUD_GLOVE("sprites/hud_glove.png"), //
+
     WALL("sprites/wall.png"), //
     BOMB("sprites/bomb.png"), //
     REDBOMB("sprites/redbomb.png"), //

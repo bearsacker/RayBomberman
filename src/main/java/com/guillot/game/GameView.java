@@ -21,6 +21,7 @@ import com.guillot.engine.Game;
 import com.guillot.engine.gui.GUI;
 import com.guillot.engine.gui.View;
 import com.guillot.game.entities.Entity;
+import com.guillot.game.resources.Images;
 
 
 public class GameView extends View {
@@ -273,8 +274,29 @@ public class GameView extends View {
 
         TextureImpl.bindNone();
 
+        if (!player.hasGlove()) {
+            g.pushTransform();
+            if (player.isHiting()) {
+                g.translate(SCREEN_WIDTH + 128, SCREEN_HEIGHT * 2 - 128);
+            } else {
+                g.translate(SCREEN_WIDTH + 128, SCREEN_HEIGHT * 2 - 64);
+            }
+            g.rotate(0f, 0f, 45f);
+            g.scale(3f, 3f);
+            Images.HUD_GLOVE.getImage().draw();
+            g.popTransform();
+        }
+
         g.setColor(org.newdawn.slick.Color.white);
-        GUI.get().getFont().drawString(10, 30, Integer.toString(player.getBombs()));
+        GUI.get().getFont(1).drawString(16, SCREEN_HEIGHT * 2 - 32, player.getBombs() + " / " + player.getAvailableBombs());
+        if (player.hasRedBomb()) {
+            Images.REDBOMB.getImage().draw(64, SCREEN_HEIGHT * 2 - 70);
+        } else {
+            Images.BOMB.getImage().draw(64, SCREEN_HEIGHT * 2 - 70);
+        }
+
+        GUI.get().getFont(1).drawString(140, SCREEN_HEIGHT * 2 - 32, player.hasPowerBomb() ? "Inf." : "   " + player.getBombRange());
+        Images.HUD_RANGE.getImage().draw(168, SCREEN_HEIGHT * 2 - 56);
     }
 
     public static void main(String[] args) throws SlickException {
