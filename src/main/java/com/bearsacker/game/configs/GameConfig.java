@@ -16,7 +16,9 @@ public final class GameConfig extends Config {
 
     public final static float ITEM_PROBABILITY = get().getFloat("item.probability");
 
-    public final static float PLAYER_SPEED_MIN = get().getFloat("player.speed.min");
+    public final static float PLAYER_SPEED = get().getFloat("player.speed");
+
+    public final static float BOMB_SPEED = get().getFloat("bomb.speed");
 
     public final static int BOMB_TIME = get().getInt("bomb.time", 3000);
 

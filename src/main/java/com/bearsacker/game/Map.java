@@ -27,6 +27,8 @@ public class Map {
 
     private Wall[][] tiles;
 
+    private ArrayList<Vec2> spawns;
+
     private ArrayList<Entity> entities;
 
     private LinkedList<Event> events;
@@ -39,6 +41,7 @@ public class Map {
         width = lines.get(0).length();
         height = lines.size();
         tiles = new Wall[width][height];
+        spawns = new ArrayList<>();
         entities = new ArrayList<>();
         events = new LinkedList<>();
 
@@ -51,6 +54,9 @@ public class Map {
                     break;
                 case 'X':
                     wall = new Wall(64, Images.WALL, true);
+                    break;
+                case 'S':
+                    spawns.add(new Vec2(x + .5f, y + .5f));
                     break;
                 }
 
@@ -106,6 +112,10 @@ public class Map {
         return entities.stream()
                 .filter(x -> ((int) x.getPosition().x) == ((int) position.x) && ((int) x.getPosition().y) == ((int) position.y))
                 .collect(Collectors.toList());
+    }
+
+    public ArrayList<Vec2> getSpawns() {
+        return spawns;
     }
 
     public void pushEvent(Event event) {

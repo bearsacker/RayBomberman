@@ -1,7 +1,7 @@
 Features:
- - Glove
  - Death
  - Bots
- - Sounds
  - Menu
- - Camera with rotation
+ - Escape menu
+ - Rotated sprite
+ - Sounds

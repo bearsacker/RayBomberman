@@ -1,5 +1,6 @@
 package com.bearsacker.game.entities;
 
+import static com.bearsacker.game.configs.GameConfig.BOMB_SPEED;
 import static com.bearsacker.game.configs.GameConfig.BOMB_TIME;
 
 import org.jbox2d.common.Vec2;
@@ -13,7 +14,7 @@ public class Bomb extends Entity {
 
     private int range;
 
-    private long time;
+    private long plantTime;
 
     private boolean exploded;
 
@@ -21,11 +22,13 @@ public class Bomb extends Entity {
 
     private Player owner;
 
+    private long lastUpdate;
+
     public Bomb(Player owner, Vec2 position, int range, boolean isRedbomb) {
         super(Images.BOMB, position);
 
         this.owner = owner;
-        this.time = System.currentTimeMillis();
+        this.plantTime = System.currentTimeMillis();
         this.range = range;
         this.exploded = false;
         this.isRedbomb = isRedbomb;
@@ -33,8 +36,26 @@ public class Bomb extends Entity {
 
     @Override
     public void update(Map map) {
-        if (System.currentTimeMillis() - time > BOMB_TIME) {
+        long time = System.currentTimeMillis();
+        float frameTime = (time - lastUpdate) / 1000f;
+        lastUpdate = time;
+
+        float moveSpeed = frameTime * BOMB_SPEED;
+
+        if (time - plantTime > BOMB_TIME) {
             explode(map);
+        } else if (direction != null) {
+            if (map.getTile((int) (position.x + direction.x * moveSpeed), (int) (position.y)) == null) {
+                position.x += direction.x * moveSpeed;
+            } else {
+                direction.x = 0f;
+            }
+
+            if (map.getTile((int) (position.x), (int) (position.y + direction.y * moveSpeed)) == null) {
+                position.y += direction.y * moveSpeed;
+            } else {
+                direction.y = 0f;
+            }
         }
     }
 

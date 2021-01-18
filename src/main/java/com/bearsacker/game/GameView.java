@@ -12,6 +12,7 @@ import static java.lang.Math.floor;
 import static java.lang.Math.sqrt;
 
 import org.jbox2d.common.Vec2;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.util.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -41,6 +42,8 @@ public class GameView extends View {
 
         player = new Player();
         map = new Map("01.map");
+
+        Mouse.setGrabbed(true);
     }
 
     @Override
@@ -274,7 +277,7 @@ public class GameView extends View {
 
         TextureImpl.bindNone();
 
-        if (!player.hasGlove()) {
+        if (player.hasGlove()) {
             g.pushTransform();
             if (player.isHiting()) {
                 g.translate(SCREEN_WIDTH + 128, SCREEN_HEIGHT * 2 - 128);
@@ -295,7 +298,7 @@ public class GameView extends View {
             Images.BOMB.getImage().draw(64, SCREEN_HEIGHT * 2 - 70);
         }
 
-        GUI.get().getFont(1).drawString(140, SCREEN_HEIGHT * 2 - 32, player.hasPowerBomb() ? "Inf." : "   " + player.getBombRange());
+        GUI.get().getFont(1).drawString(144, SCREEN_HEIGHT * 2 - 32, player.hasPowerBomb() ? "Inf" : "  " + player.getBombRange());
         Images.HUD_RANGE.getImage().draw(168, SCREEN_HEIGHT * 2 - 56);
     }
 

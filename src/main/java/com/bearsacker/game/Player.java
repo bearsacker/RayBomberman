@@ -1,10 +1,13 @@
 package com.bearsacker.game;
 
-import static com.bearsacker.game.configs.GameConfig.PLAYER_SPEED_MIN;
+import static com.bearsacker.engine.configs.EngineConfig.WIDTH;
+import static com.bearsacker.game.configs.GameConfig.PLAYER_SPEED;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
 import static org.newdawn.slick.Input.KEY_D;
 import static org.newdawn.slick.Input.KEY_E;
+import static org.newdawn.slick.Input.KEY_ESCAPE;
 import static org.newdawn.slick.Input.KEY_Q;
 import static org.newdawn.slick.Input.KEY_S;
 import static org.newdawn.slick.Input.KEY_Z;
@@ -13,6 +16,7 @@ import static org.newdawn.slick.Input.MOUSE_LEFT_BUTTON;
 import java.util.List;
 
 import org.jbox2d.common.Vec2;
+import org.lwjgl.input.Mouse;
 
 import com.bearsacker.engine.gui.GUI;
 import com.bearsacker.game.entities.Bomb;
@@ -21,6 +25,10 @@ import com.bearsacker.game.entities.Fire;
 import com.bearsacker.game.items.Item;
 
 public class Player {
+
+    private final static double ANGLE_LEFT = toRadians(90f);
+
+    private final static double ANGLE_RIGHT = toRadians(-90f);
 
     private Vec2 position;
 
@@ -51,10 +59,13 @@ public class Player {
         direction = new Vec2(-1f, 0f);
         plane = new Vec2(0f, .66f);
 
-        speed = PLAYER_SPEED_MIN;
+        speed = PLAYER_SPEED;
         availableBombs = 1;
         bombs = 1;
         bombRange = 1;
+
+        // TODO temp
+        hasGlove = true;
     }
 
     public void update(Map map) {
@@ -64,14 +75,28 @@ public class Player {
 
         float moveSpeed = frameTime * speed;
 
+        hiting = hasGlove && GUI.get().getInput().isMouseButtonDown(MOUSE_LEFT_BUTTON);
+
         List<Entity> entities = map.getEntitiesAt(position);
         for (Entity entity : entities) {
-            if (entity instanceof Fire) {
+            if (hiting && entity instanceof Bomb) {
+                entity.setDirection(direction);
+            } else if (entity instanceof Fire) {
                 // TODO Death
             } else if (entity instanceof Item) {
                 ((Item) entity).use(this);
             }
         }
+
+        double rad = -toRadians(Mouse.getDX() / (WIDTH / 2f) * 90f);
+
+        float oldDirX = direction.x;
+        direction.x = (float) (direction.x * cos(rad) - direction.y * sin(rad));
+        direction.y = (float) (oldDirX * sin(rad) + direction.y * cos(rad));
+
+        float oldPlaneX = plane.x;
+        plane.x = (float) (plane.x * cos(rad) - plane.y * sin(rad));
+        plane.y = (float) (oldPlaneX * sin(rad) + plane.y * cos(rad));
 
         if (GUI.get().getInput().isKeyDown(KEY_Z)) {
             if (map.getTile((int) (position.x + direction.x * moveSpeed), (int) (position.y)) == null) {
@@ -80,9 +105,7 @@ public class Player {
             if (map.getTile((int) (position.x), (int) (position.y + direction.y * moveSpeed)) == null) {
                 position.y += direction.y * moveSpeed;
             }
-        }
-
-        if (GUI.get().getInput().isKeyDown(KEY_S)) {
+        } else if (GUI.get().getInput().isKeyDown(KEY_S)) {
             if (map.getTile((int) (position.x - direction.x * moveSpeed), (int) (position.y)) == null) {
                 position.x -= direction.x * moveSpeed;
             }
@@ -92,23 +115,29 @@ public class Player {
         }
 
         if (GUI.get().getInput().isKeyDown(KEY_Q)) {
-            float oldDirX = direction.x;
-            direction.x = (float) (direction.x * cos(.01f) - direction.y * sin(.01f));
-            direction.y = (float) (oldDirX * sin(.01f) + direction.y * cos(.01f));
+            Vec2 newDirection = new Vec2(direction);
+            float oldX = newDirection.x;
+            newDirection.x = (float) (newDirection.x * cos(ANGLE_LEFT) - newDirection.y * sin(ANGLE_LEFT));
+            newDirection.y = (float) (oldX * sin(ANGLE_LEFT) + newDirection.y * cos(ANGLE_LEFT));
 
-            float oldPlaneX = plane.x;
-            plane.x = (float) (plane.x * cos(.01f) - plane.y * sin(.01f));
-            plane.y = (float) (oldPlaneX * sin(.01f) + plane.y * cos(.01f));
-        }
+            if (map.getTile((int) (position.x + newDirection.x * moveSpeed), (int) (position.y)) == null) {
+                position.x += newDirection.x * moveSpeed;
+            }
+            if (map.getTile((int) (position.x), (int) (position.y + newDirection.y * moveSpeed)) == null) {
+                position.y += newDirection.y * moveSpeed;
+            }
+        } else if (GUI.get().getInput().isKeyDown(KEY_D)) {
+            Vec2 newDirection = new Vec2(direction);
+            float oldX = newDirection.x;
+            newDirection.x = (float) (newDirection.x * cos(ANGLE_RIGHT) - newDirection.y * sin(ANGLE_RIGHT));
+            newDirection.y = (float) (oldX * sin(ANGLE_RIGHT) + newDirection.y * cos(ANGLE_RIGHT));
 
-        if (GUI.get().getInput().isKeyDown(KEY_D)) {
-            float oldDirX = direction.x;
-            direction.x = (float) (direction.x * cos(-.01f) - direction.y * sin(-.01f));
-            direction.y = (float) (oldDirX * sin(-.01f) + direction.y * cos(-.01f));
-
-            float oldPlaneX = plane.x;
-            plane.x = (float) (plane.x * cos(-.01f) - plane.y * sin(-.01f));
-            plane.y = (float) (oldPlaneX * sin(-.01f) + plane.y * cos(-.01f));
+            if (map.getTile((int) (position.x + newDirection.x * moveSpeed), (int) (position.y)) == null) {
+                position.x += newDirection.x * moveSpeed;
+            }
+            if (map.getTile((int) (position.x), (int) (position.y + newDirection.y * moveSpeed)) == null) {
+                position.y += newDirection.y * moveSpeed;
+            }
         }
 
         if (GUI.get().isKeyPressed(KEY_E) && bombs > 0) {
@@ -116,7 +145,10 @@ public class Player {
             map.getEntities().add(new Bomb(this, new Vec2(position), bombRange, hasRedBomb));
         }
 
-        hiting = GUI.get().getInput().isMouseButtonDown(MOUSE_LEFT_BUTTON);
+        // TODO escape menu
+        if (GUI.get().isKeyPressed(KEY_ESCAPE) && bombs > 0) {
+            GUI.get().close();
+        }
     }
 
     public void pickUpRedBomb() {
@@ -184,13 +216,13 @@ public class Player {
     }
 
     public void decrementSpeed() {
-        if (speed > PLAYER_SPEED_MIN) {
-            speed -= PLAYER_SPEED_MIN / 3f;
+        if (speed > PLAYER_SPEED) {
+            speed -= PLAYER_SPEED / 3f;
         }
     }
 
     public void incrementSpeed() {
-        speed += PLAYER_SPEED_MIN / 3f;
+        speed += PLAYER_SPEED / 3f;
     }
 
     public Vec2 getPosition() {
