@@ -27,6 +27,7 @@ public class Bomb extends Entity {
     public Bomb(Player owner, Vec2 position, int range, boolean isRedbomb) {
         super(Images.BOMB, position);
 
+        this.position = position;
         this.owner = owner;
         this.plantTime = System.currentTimeMillis();
         this.range = range;

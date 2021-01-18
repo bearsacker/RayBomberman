@@ -14,7 +14,9 @@ import java.util.stream.Collectors;
 import org.jbox2d.common.Vec2;
 
 import com.bearsacker.engine.utils.NumberGenerator;
+import com.bearsacker.game.entities.Bot;
 import com.bearsacker.game.entities.Entity;
+import com.bearsacker.game.entities.Fire;
 import com.bearsacker.game.events.AddItem;
 import com.bearsacker.game.events.Event;
 import com.bearsacker.game.resources.Images;
@@ -104,6 +106,10 @@ public class Map {
         }
     }
 
+    public void addBot(Vec2 position) {
+        entities.add(new Bot(position));
+    }
+
     public ArrayList<Entity> getEntities() {
         return entities;
     }
@@ -112,6 +118,11 @@ public class Map {
         return entities.stream()
                 .filter(x -> ((int) x.getPosition().x) == ((int) position.x) && ((int) x.getPosition().y) == ((int) position.y))
                 .collect(Collectors.toList());
+    }
+
+    public boolean isBurningAt(Vec2 position) {
+        return entities.parallelStream().anyMatch(x -> x instanceof Fire && ((int) x.getPosition().x) == ((int) position.x)
+                && ((int) x.getPosition().y) == ((int) position.y));
     }
 
     public ArrayList<Vec2> getSpawns() {

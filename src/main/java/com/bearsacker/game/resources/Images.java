@@ -18,6 +18,13 @@ public enum Images {
     HUD_RANGE("sprites/hud_range.png"), //
     HUD_GLOVE("sprites/hud_glove.png"), //
 
+    PLAYER_FRONT_1("sprites/player_front_1.png"), //
+    PLAYER_FRONT_2("sprites/player_front_2.png"), //
+    PLAYER_FRONT_3("sprites/player_front_3.png"), //
+    PLAYER_FRONT_4("sprites/player_front_4.png"), //
+    PLAYER_FRONT_5("sprites/player_front_5.png"), //
+    PLAYER_FRONT_6("sprites/player_front_6.png"), //
+
     WALL("sprites/wall.png"), //
     BOMB("sprites/bomb.png"), //
     REDBOMB("sprites/redbomb.png"), //
@@ -35,13 +42,6 @@ public enum Images {
     private byte[] data;
 
     private Images(String path) {
-        this(path, 0, 0);
-    }
-
-    private Images(String path, int frameWidth, int frameHeight) {
-        this.frameWidth = frameWidth;
-        this.frameHeight = frameHeight;
-
         try {
             image = new Image(path);
             image.setFilter(Image.FILTER_NEAREST);

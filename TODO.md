@@ -1,6 +1,6 @@
 Features:
  - Death
- - Bots
+ - IA
  - Menu
  - Escape menu
  - Rotated sprite

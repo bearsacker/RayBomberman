@@ -1,5 +1,7 @@
 package com.bearsacker.game.items;
 
+import static com.bearsacker.game.configs.GameConfig.FIRE_TIME;
+
 import org.jbox2d.common.Vec2;
 
 import com.bearsacker.game.Map;
@@ -9,12 +11,16 @@ import com.bearsacker.game.resources.Images;
 
 public abstract class Item extends Entity {
 
+    private long time;
+
     protected Items type;
 
     protected boolean used;
 
     public Item(Images sprite, Vec2 position) {
         super(sprite, position);
+
+        time = System.currentTimeMillis();
     }
 
     @Override
@@ -23,7 +29,11 @@ public abstract class Item extends Entity {
     }
 
     @Override
-    public void update(Map map) {}
+    public void update(Map map) {
+        if (System.currentTimeMillis() - time > FIRE_TIME && map.isBurningAt(position)) {
+            used = true;
+        }
+    }
 
     public abstract void use(Player player);
 

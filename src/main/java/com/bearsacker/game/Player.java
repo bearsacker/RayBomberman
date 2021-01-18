@@ -54,8 +54,8 @@ public class Player {
 
     private long lastUpdate;
 
-    public Player() {
-        position = new Vec2(1.5f, 1.5f);
+    public Player(Vec2 position) {
+        this.position = new Vec2(position);
         direction = new Vec2(-1f, 0f);
         plane = new Vec2(0f, .66f);
 
@@ -66,6 +66,8 @@ public class Player {
 
         // TODO temp
         hasGlove = true;
+        hasRedBomb = true;
+        hasPowerBomb = true;
     }
 
     public void update(Map map) {
@@ -142,7 +144,13 @@ public class Player {
 
         if (GUI.get().isKeyPressed(KEY_E) && bombs > 0) {
             bombs--;
-            map.getEntities().add(new Bomb(this, new Vec2(position), bombRange, hasRedBomb));
+            if (map.getTile((int) (position.x + direction.x / 2f), (int) (position.y)) == null
+                    && map.getTile((int) (position.x), (int) (position.y + direction.y / 2f)) == null) {
+                map.getEntities()
+                        .add(new Bomb(this, new Vec2(position.x + direction.x / 2f, position.y + direction.y / 2f), bombRange, hasRedBomb));
+            } else {
+                map.getEntities().add(new Bomb(this, new Vec2(position), bombRange, hasRedBomb));
+            }
         }
 
         // TODO escape menu

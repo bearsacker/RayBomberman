@@ -40,8 +40,11 @@ public class GameView extends View {
         imageBuffer = new ImageBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, true);
         zBuffer = new double[SCREEN_WIDTH];
 
-        player = new Player();
         map = new Map("01.map");
+        player = new Player(map.getSpawns().get(0));
+        for (int i = 1; i < map.getSpawns().size(); i++) {
+            map.addBot(map.getSpawns().get(i));
+        }
 
         Mouse.setGrabbed(true);
     }
