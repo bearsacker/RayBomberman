@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.jbox2d.common.Vec2;
 
 import com.bearsacker.engine.utils.NumberGenerator;
+import com.bearsacker.game.ai.AStar;
 import com.bearsacker.game.entities.Bot;
 import com.bearsacker.game.entities.Entity;
 import com.bearsacker.game.entities.Fire;
@@ -34,6 +35,8 @@ public class Map {
     private ArrayList<Entity> entities;
 
     private LinkedList<Event> events;
+
+    private AStar aStar;
 
     public Map(String file) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -65,6 +68,8 @@ public class Map {
                 tiles[x][y] = wall;
             }
         }
+
+        aStar = new AStar(this, width * height);
     }
 
     public void update() {
@@ -81,6 +86,14 @@ public class Map {
                 iterator.remove();
             }
         }
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public Wall getTile(int x, int y) {
