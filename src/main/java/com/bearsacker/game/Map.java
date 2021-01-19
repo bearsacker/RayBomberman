@@ -145,4 +145,8 @@ public class Map {
     public void pushEvent(Event event) {
         events.push(event);
     }
+
+    public AStar getAStar() {
+        return aStar;
+    }
 }

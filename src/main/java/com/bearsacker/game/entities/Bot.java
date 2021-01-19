@@ -50,7 +50,7 @@ public class Bot extends Entity {
         }
 
         if (map.isBurningAt(position)) {
-            alive = false;
+            // alive = false;
         }
     }
 
