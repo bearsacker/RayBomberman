@@ -6,6 +6,7 @@ import static com.bearsacker.engine.configs.GUIConfig.DIALOG_BUTTON_TEXT;
 import static com.bearsacker.engine.configs.GUIConfig.EXCEPTION_TEXT_COLOR;
 
 import org.apache.log4j.Logger;
+import org.lwjgl.input.Mouse;
 
 public class ViewException extends View {
 
@@ -19,6 +20,7 @@ public class ViewException extends View {
 
     @Override
     public void start() throws Exception {
+        Mouse.setGrabbed(false);
         logger.error("", exception);
 
         String text = "";

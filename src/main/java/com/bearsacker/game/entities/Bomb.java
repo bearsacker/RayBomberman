@@ -6,7 +6,7 @@ import static com.bearsacker.game.configs.GameConfig.BOMB_TIME;
 import org.jbox2d.common.Vec2;
 
 import com.bearsacker.game.Map;
-import com.bearsacker.game.Player;
+import com.bearsacker.game.Playable;
 import com.bearsacker.game.events.AddExplosion;
 import com.bearsacker.game.resources.Images;
 
@@ -20,11 +20,11 @@ public class Bomb extends Entity {
 
     private boolean isRedbomb;
 
-    private Player owner;
+    private Playable owner;
 
     private long lastUpdate;
 
-    public Bomb(Player owner, Vec2 position, int range, boolean isRedbomb) {
+    public Bomb(Playable owner, Vec2 position, int range, boolean isRedbomb) {
         super(Images.BOMB, position);
 
         this.position = position;

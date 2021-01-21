@@ -48,7 +48,7 @@ public class Path {
      * @return The x coordinate at the step
      */
     public int getX(int index) {
-        return getStep(index).getX();
+        return getStep(index).x;
     }
 
     /**
@@ -58,7 +58,7 @@ public class Path {
      * @return The y coordinate at the step
      */
     public int getY(int index) {
-        return getStep(index).getY();
+        return getStep(index).y;
     }
 
     /**

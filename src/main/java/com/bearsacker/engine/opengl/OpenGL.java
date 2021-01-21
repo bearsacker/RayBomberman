@@ -10,6 +10,7 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
@@ -22,6 +23,7 @@ import java.nio.ByteBuffer;
 public class OpenGL {
 
     public static void drawRectangle(int x, int y, int width, int height, int textureID) {
+        glColor3f(1f, 1f, 1f);
         glBindTexture(GL_TEXTURE_2D, textureID);
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f);

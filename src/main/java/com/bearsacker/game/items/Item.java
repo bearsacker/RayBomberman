@@ -5,7 +5,7 @@ import static com.bearsacker.game.configs.GameConfig.FIRE_TIME;
 import org.jbox2d.common.Vec2;
 
 import com.bearsacker.game.Map;
-import com.bearsacker.game.Player;
+import com.bearsacker.game.Playable;
 import com.bearsacker.game.entities.Entity;
 import com.bearsacker.game.resources.Images;
 
@@ -35,6 +35,8 @@ public abstract class Item extends Entity {
         }
     }
 
-    public abstract void use(Player player);
+    public abstract void use(Playable player);
+
+    public abstract boolean isBonus();
 
 }

@@ -3,9 +3,9 @@ package com.bearsacker.game.ai;
 
 public class Point {
 
-    private int x;
+    public int x;
 
-    private int y;
+    public int y;
 
     public Point() {
         this(0, 0);
@@ -25,22 +25,6 @@ public class Point {
         }
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
     public boolean is(int x, int y) {
         return this.x == x && this.y == y;
     }
@@ -51,8 +35,8 @@ public class Point {
 
     public double distanceFrom(Point point) {
         if (point != null) {
-            int dy = point.getY() - getY();
-            int dx = point.getX() - getX();
+            int dy = point.y - y;
+            int dx = point.x - x;
             return Math.sqrt(dy * dy + dx * dx);
         }
 
@@ -114,5 +98,10 @@ public class Point {
         if (y != other.y)
             return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + x + "," + y + ")";
     }
 }

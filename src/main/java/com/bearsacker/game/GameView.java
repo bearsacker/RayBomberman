@@ -10,6 +10,9 @@ import static com.bearsacker.game.resources.Images.FLOOR;
 import static java.lang.Math.abs;
 import static java.lang.Math.floor;
 import static java.lang.Math.sqrt;
+import static org.newdawn.slick.Input.KEY_ESCAPE;
+
+import java.util.ArrayList;
 
 import org.jbox2d.common.Vec2;
 import org.lwjgl.input.Mouse;
@@ -21,15 +24,20 @@ import org.newdawn.slick.opengl.TextureImpl;
 import com.bearsacker.engine.Game;
 import com.bearsacker.engine.gui.GUI;
 import com.bearsacker.engine.gui.View;
+import com.bearsacker.game.entities.Bot;
 import com.bearsacker.game.entities.Entity;
 import com.bearsacker.game.resources.Images;
 
 
 public class GameView extends View {
 
+    private MenuDialog menuDialog;
+
     private Map map;
 
     private Player player;
+
+    private ArrayList<Bot> bots;
 
     private ImageBuffer imageBuffer;
 
@@ -37,30 +45,39 @@ public class GameView extends View {
 
     @Override
     public void start() throws Exception {
+        menuDialog = new MenuDialog(this);
+
         imageBuffer = new ImageBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, true);
         zBuffer = new double[SCREEN_WIDTH];
 
         map = new Map("01.map");
         player = new Player(map.getSpawns().get(0));
+        bots = new ArrayList<>();
         for (int i = 1; i < map.getSpawns().size(); i++) {
-            map.addBot(map.getSpawns().get(i));
+            bots.add(map.addBot(map.getSpawns().get(i)));
         }
 
         Mouse.setGrabbed(true);
+
+        add(menuDialog);
     }
 
     @Override
     public void update() throws Exception {
         super.update();
 
-        player.update(map);
-        map.update();
+        if (focused) {
+            player.update(map);
+            map.update();
+
+            if (GUI.get().isKeyPressed(KEY_ESCAPE)) {
+                menuDialog.setVisible(true);
+            }
+        }
     }
 
     @Override
     public void paint(Graphics g) throws Exception {
-        super.paint(g);
-
         // Floor casting
         for (int y = 0; y < SCREEN_HEIGHT; y++) {
             // rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
@@ -268,8 +285,11 @@ public class GameView extends View {
                         int d = y - SCREEN_HEIGHT / 2 + spriteHeight / 2;
                         int ty = (d * TILE_SIZE) / spriteHeight;
 
-                        Color spriteColor = entity.getSprite().getPixel(tx, ty);
-                        imageBuffer.addToPixel(stripe, y, spriteColor);
+                        if (tx >= 0 && ty >= 0 && tx < entity.getSprite().getImage().getWidth()
+                                && ty < entity.getSprite().getImage().getHeight()) {
+                            Color spriteColor = entity.getSprite().getPixel(tx, ty);
+                            imageBuffer.addToPixel(stripe, y, spriteColor);
+                        }
                     }
                 }
             }
@@ -302,7 +322,18 @@ public class GameView extends View {
         }
 
         GUI.get().getFont(1).drawString(144, SCREEN_HEIGHT * 2 - 32, player.hasPowerBomb() ? "Inf" : "  " + player.getBombRange());
-        Images.HUD_RANGE.getImage().draw(168, SCREEN_HEIGHT * 2 - 56);
+        Images.HUD_RANGE.getImage().draw(176, SCREEN_HEIGHT * 2 - 56);
+
+        GUI.get().getFont(1).drawString(16, 16, "Enemies ");
+        for (int i = 0; i < bots.size(); i++) {
+            if (bots.get(i).isToRemove()) {
+                Images.PLAYER_FRONT_1.getImage().draw(128 + i * 24, 4, .5f, new org.newdawn.slick.Color(0f, 0f, 0f, .25f));
+            } else {
+                Images.PLAYER_FRONT_1.getImage().draw(128 + i * 24, 4, .5f);
+            }
+        }
+
+        super.paint(g);
     }
 
     public static void main(String[] args) throws SlickException {

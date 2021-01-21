@@ -7,7 +7,6 @@ import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 import static org.newdawn.slick.Input.KEY_D;
 import static org.newdawn.slick.Input.KEY_E;
-import static org.newdawn.slick.Input.KEY_ESCAPE;
 import static org.newdawn.slick.Input.KEY_Q;
 import static org.newdawn.slick.Input.KEY_S;
 import static org.newdawn.slick.Input.KEY_Z;
@@ -24,7 +23,7 @@ import com.bearsacker.game.entities.Entity;
 import com.bearsacker.game.entities.Fire;
 import com.bearsacker.game.items.Item;
 
-public class Player {
+public class Player implements Playable {
 
     private final static double ANGLE_LEFT = toRadians(90f);
 
@@ -63,11 +62,6 @@ public class Player {
         availableBombs = 1;
         bombs = 1;
         bombRange = 1;
-
-        // TODO temp
-        hasGlove = true;
-        hasRedBomb = true;
-        hasPowerBomb = true;
     }
 
     public void update(Map map) {
@@ -152,33 +146,34 @@ public class Player {
                 map.getEntities().add(new Bomb(this, new Vec2(position), bombRange, hasRedBomb));
             }
         }
-
-        // TODO escape menu
-        if (GUI.get().isKeyPressed(KEY_ESCAPE) && bombs > 0) {
-            GUI.get().close();
-        }
     }
 
+    @Override
     public void pickUpRedBomb() {
         hasRedBomb = true;
     }
 
+    @Override
     public boolean hasRedBomb() {
         return hasRedBomb;
     }
 
+    @Override
     public void pickUpPowerBomb() {
         hasPowerBomb = true;
     }
 
+    @Override
     public boolean hasPowerBomb() {
         return hasPowerBomb;
     }
 
+    @Override
     public void pickUpGlove() {
         hasGlove = true;
     }
 
+    @Override
     public boolean hasGlove() {
         return hasGlove;
     }
@@ -195,6 +190,7 @@ public class Player {
         return bombRange;
     }
 
+    @Override
     public void decrementBombs() {
         if (availableBombs > 1) {
             availableBombs--;
@@ -204,31 +200,37 @@ public class Player {
         }
     }
 
+    @Override
     public void incrementBombs() {
         availableBombs++;
         bombs++;
     }
 
+    @Override
     public void decrementRange() {
         if (bombRange > 1) {
             bombRange--;
         }
     }
 
+    @Override
     public void retrieveBomb() {
         bombs++;
     }
 
+    @Override
     public void incrementRange() {
         bombRange++;
     }
 
+    @Override
     public void decrementSpeed() {
         if (speed > PLAYER_SPEED) {
             speed -= PLAYER_SPEED / 3f;
         }
     }
 
+    @Override
     public void incrementSpeed() {
         speed += PLAYER_SPEED / 3f;
     }

@@ -15,11 +15,13 @@ import org.jbox2d.common.Vec2;
 
 import com.bearsacker.engine.utils.NumberGenerator;
 import com.bearsacker.game.ai.AStar;
+import com.bearsacker.game.entities.Bomb;
 import com.bearsacker.game.entities.Bot;
 import com.bearsacker.game.entities.Entity;
 import com.bearsacker.game.entities.Fire;
 import com.bearsacker.game.events.AddItem;
 import com.bearsacker.game.events.Event;
+import com.bearsacker.game.items.Item;
 import com.bearsacker.game.resources.Images;
 
 public class Map {
@@ -37,6 +39,8 @@ public class Map {
     private LinkedList<Event> events;
 
     private AStar aStar;
+
+    private boolean destroyed;
 
     public Map(String file) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -78,6 +82,8 @@ public class Map {
             event.perform(this);
         }
 
+        destroyed = updateDestroyed();
+
         Iterator<Entity> iterator = entities.iterator();
         while (iterator.hasNext()) {
             Entity entity = iterator.next();
@@ -86,6 +92,18 @@ public class Map {
                 iterator.remove();
             }
         }
+    }
+
+    private boolean updateDestroyed() {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (tiles[x][y] != null && tiles[x][y].isBreakable()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     public int getWidth() {
@@ -119,8 +137,11 @@ public class Map {
         }
     }
 
-    public void addBot(Vec2 position) {
-        entities.add(new Bot(position));
+    public Bot addBot(Vec2 position) {
+        Bot bot = new Bot(position);
+        entities.add(bot);
+
+        return bot;
     }
 
     public ArrayList<Entity> getEntities() {
@@ -133,9 +154,35 @@ public class Map {
                 .collect(Collectors.toList());
     }
 
+    public Bomb getBombAt(Vec2 position) {
+        return (Bomb) entities.parallelStream().filter(x -> x instanceof Bomb && ((int) x.getPosition().x) == ((int) position.x)
+                && ((int) x.getPosition().y) == ((int) position.y)).findFirst().orElse(null);
+    }
+
+    public List<Entity> getBombs() {
+        return entities.stream().filter(x -> x instanceof Bomb).collect(Collectors.toList());
+    }
+
+    public Entity getItemAt(Vec2 position) {
+        return (Bomb) entities.parallelStream()
+                .filter(x -> x instanceof Item && ((Item) x).isBonus() && ((int) x.getPosition().x) == ((int) position.x)
+                        && ((int) x.getPosition().y) == ((int) position.y))
+                .findFirst().orElse(null);
+    }
+
     public boolean isBurningAt(Vec2 position) {
         return entities.parallelStream().anyMatch(x -> x instanceof Fire && ((int) x.getPosition().x) == ((int) position.x)
                 && ((int) x.getPosition().y) == ((int) position.y));
+    }
+
+    public boolean hasBreakableNeighboors(int x, int y) {
+        Wall left = getTile(x - 1, y);
+        Wall right = getTile(x + 1, y);
+        Wall top = getTile(x, y + 1);
+        Wall bottom = getTile(x, y - 1);
+
+        return (left != null && left.isBreakable()) || (right != null && right.isBreakable()) || (top != null && top.isBreakable())
+                || (bottom != null && bottom.isBreakable());
     }
 
     public ArrayList<Vec2> getSpawns() {
@@ -148,5 +195,9 @@ public class Map {
 
     public AStar getAStar() {
         return aStar;
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
     }
 }

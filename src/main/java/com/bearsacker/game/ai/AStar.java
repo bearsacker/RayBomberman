@@ -58,13 +58,18 @@ public class AStar {
      * @return the path or null
      */
     public Path findPath(Point start, Point end, boolean allowDiag) {
-        int sx = start.getX();
-        int sy = start.getY();
-        int tx = end.getX();
-        int ty = end.getY();
+        if (start.x < 0 || start.y < 0 || start.x >= map.getWidth() || start.y >= map.getHeight() || end.x < 0 || end.y < 0
+                || end.x >= map.getWidth() || end.y >= map.getHeight()) {
+            return null;
+        }
+
+        int sx = start.x;
+        int sy = start.y;
+        int tx = end.x;
+        int ty = end.y;
 
         // easy first check, if the destination is blocked, we can't get there
-        if (map.getTile(end.getX(), end.getY()) != null) {
+        if (map.getTile(end.x, end.y) != null) {
             return null;
         }
 
