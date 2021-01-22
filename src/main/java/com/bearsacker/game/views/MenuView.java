@@ -9,6 +9,7 @@ import static com.bearsacker.game.configs.GameConfig.SCREEN_WIDTH;
 import static com.bearsacker.game.configs.GameConfig.TILE_SIZE;
 import static com.bearsacker.game.resources.Images.CEILING;
 import static com.bearsacker.game.resources.Images.FLOOR;
+import static org.newdawn.slick.Input.KEY_ESCAPE;
 
 import org.jbox2d.common.Vec2;
 import org.lwjgl.input.Mouse;
@@ -75,6 +76,15 @@ public class MenuView extends View {
     }
 
     @Override
+    public void update() throws Exception {
+        super.update();
+
+        if (GUI.get().isKeyPressed(KEY_ESCAPE)) {
+            GUI.get().close();
+        }
+    }
+
+    @Override
     public void paint(Graphics g) throws Exception {
         // Floor casting
         for (int y = 0; y < SCREEN_HEIGHT; y++) {
@@ -121,7 +131,7 @@ public class MenuView extends View {
         }
 
         int textureId = createTextureFromBuffer(imageBuffer.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT, imageBuffer.hasAlpha());
-        drawRectangle(0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, textureId);
+        drawRectangle(0, 0, WIDTH, HEIGHT, textureId);
 
         TextureImpl.bindNone();
 

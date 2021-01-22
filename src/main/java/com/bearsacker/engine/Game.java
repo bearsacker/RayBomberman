@@ -4,6 +4,7 @@ import static com.bearsacker.engine.configs.EngineConfig.FPS;
 import static com.bearsacker.engine.configs.EngineConfig.FULLSCREEN;
 import static com.bearsacker.engine.configs.EngineConfig.HEIGHT;
 import static com.bearsacker.engine.configs.EngineConfig.ICON;
+import static com.bearsacker.engine.configs.EngineConfig.SCALE;
 import static com.bearsacker.engine.configs.EngineConfig.SHOW_FPS;
 import static com.bearsacker.engine.configs.EngineConfig.TITLE;
 import static com.bearsacker.engine.configs.EngineConfig.WIDTH;
@@ -27,7 +28,7 @@ public class Game extends BasicGame {
         this.initialView = initialView;
 
         AppGameContainer app = new AppGameContainer(this);
-        app.setDisplayMode(WIDTH, HEIGHT, FULLSCREEN);
+        app.setDisplayMode((int) (WIDTH * SCALE), (int) (HEIGHT * SCALE), FULLSCREEN);
         app.setShowFPS(SHOW_FPS);
         if (ICON != null) {
             app.setIcon(ICON);

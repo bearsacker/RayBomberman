@@ -1,5 +1,6 @@
 package com.bearsacker.engine.gui;
 
+import static com.bearsacker.engine.configs.EngineConfig.SCALE;
 import static com.bearsacker.engine.configs.GUIConfig.DEFAULT_TEXT_COLOR;
 import static com.bearsacker.engine.configs.GUIConfig.FONT;
 import static com.bearsacker.engine.configs.GUIConfig.FONT_SIZES;
@@ -129,7 +130,10 @@ public class GUI {
     public void paint(Graphics g) {
         try {
             if (currentView != null) {
+                g.pushTransform();
+                g.scale(SCALE, SCALE);
                 currentView.paint(g);
+                g.popTransform();
             }
         } catch (Exception e) {
             switchView(new ViewException(e));
@@ -145,8 +149,8 @@ public class GUI {
             input = this.container.getInput();
         }
 
-        mouseX = input.getMouseX();
-        mouseY = input.getMouseY();
+        mouseX = (int) (input.getMouseX() / SCALE);
+        mouseY = (int) (input.getMouseY() / SCALE);
 
         for (int i = 0; i < keysPressed.length; i++) {
             keysPressed[i] = input.isKeyPressed(i);

@@ -10,6 +10,8 @@ public final class EngineConfig extends Config {
 
     public final static int HEIGHT = get().getInt("engine.height", 600);
 
+    public final static float SCALE = get().getFloat("engine.scale", 1f);
+
     public final static String TITLE = get().getString("engine.title", "Application");
 
     public final static String ICON = get().getString("engine.icon", null);
