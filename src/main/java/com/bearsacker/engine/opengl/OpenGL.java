@@ -50,19 +50,17 @@ public class OpenGL {
         glEnd();
     }
 
-    public static int createTextureFromBuffer(byte[] buffer, int width, int height, boolean hasAlpha) {
-        int textureId = glGenTextures();
-        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(buffer.length);
-        byteBuffer.put(buffer);
-        byteBuffer.flip();
-
+    public static int createTextureFromBuffer(ByteBuffer buffer, int width, int height, boolean hasAlpha, int textureId) {
         glBindTexture(GL_TEXTURE_2D, textureId);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexImage2D(GL_TEXTURE_2D, 0, hasAlpha ? GL_RGBA : GL_RGB, width, height, 0, hasAlpha ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE,
-                byteBuffer);
+                buffer);
 
         return textureId;
     }
 
+    public static int createTextureFromBuffer(ByteBuffer buffer, int width, int height, boolean hasAlpha) {
+        return createTextureFromBuffer(buffer, width, height, hasAlpha, glGenTextures());
+    }
 }

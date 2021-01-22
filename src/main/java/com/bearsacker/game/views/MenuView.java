@@ -144,8 +144,8 @@ public class MenuView extends View {
             }
         }
 
-        int textureId = createTextureFromBuffer(imageBuffer.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT, imageBuffer.hasAlpha());
-        drawRectangle(0, 0, WIDTH, HEIGHT, textureId);
+        createTextureFromBuffer(imageBuffer.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT, imageBuffer.hasAlpha(), imageBuffer.getTextureId());
+        drawRectangle(0, 0, WIDTH, HEIGHT, imageBuffer.getTextureId());
 
         TextureImpl.bindNone();
 
