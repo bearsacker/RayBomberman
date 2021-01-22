@@ -43,6 +43,10 @@ public class GameView extends View {
 
     private Map map;
 
+    private String mapPath;
+
+    private boolean isArmageddon;
+
     private Player player;
 
     private ArrayList<Bot> bots;
@@ -50,6 +54,11 @@ public class GameView extends View {
     private ImageBuffer imageBuffer;
 
     private double[] zBuffer;
+
+    public GameView(String mapPath, boolean isArmageddon) {
+        this.mapPath = mapPath;
+        this.isArmageddon = isArmageddon;
+    }
 
     @Override
     public void start() throws Exception {
@@ -60,11 +69,16 @@ public class GameView extends View {
         imageBuffer = new ImageBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, true);
         zBuffer = new double[SCREEN_WIDTH];
 
-        map = new Map("01.map");
+        map = new Map(mapPath);
         player = new Player(map.getSpawns().get(0));
+        if (isArmageddon) {
+            player.pickUpPowerBomb();
+            player.pickUpGlove();
+        }
         bots = new ArrayList<>();
         for (int i = 1; i < map.getSpawns().size(); i++) {
             bots.add(map.addBot(map.getSpawns().get(i)));
+            bots.get(bots.size() - 1).pickUpPowerBomb();
         }
 
         Mouse.setGrabbed(true);
@@ -319,9 +333,9 @@ public class GameView extends View {
         if (player.hasGlove()) {
             g.pushTransform();
             if (player.isHiting()) {
-                g.translate(WIDTH + 128, HEIGHT - 128);
+                g.translate(WIDTH / 2 + 64, HEIGHT - 128);
             } else {
-                g.translate(WIDTH + 128, HEIGHT - 64);
+                g.translate(WIDTH / 2 + 64, HEIGHT - 64);
             }
             g.rotate(0f, 0f, 45f);
             g.scale(3f, 3f);
@@ -354,5 +368,13 @@ public class GameView extends View {
 
     private boolean allBotsAreDead() {
         return bots.stream().allMatch(x -> x.isToRemove());
+    }
+
+    public boolean isArmageddon() {
+        return isArmageddon;
+    }
+
+    public String getMapPath() {
+        return mapPath;
     }
 }

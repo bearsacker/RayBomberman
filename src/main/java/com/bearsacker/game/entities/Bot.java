@@ -7,6 +7,7 @@ import static com.bearsacker.game.entities.BotAction.NOTHING;
 import static com.bearsacker.game.entities.BotAction.PLANT;
 import static com.bearsacker.game.entities.BotAction.WAIT;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jbox2d.common.Vec2;
@@ -21,6 +22,10 @@ import com.bearsacker.game.items.Item;
 import com.bearsacker.game.resources.Images;
 
 public class Bot extends Entity implements Playable {
+
+    private final static int DISTANCE_PLANT = 5;
+
+    private final static int DISTANCE_HIDE = 3;
 
     private final static long FRAME_DURATION = 100;
 
@@ -116,6 +121,15 @@ public class Bot extends Entity implements Playable {
 
             destination = findDestinationToHide(map, position, sawBomb.position);
             currentStep = 0;
+        } else {
+            Entity entity = isSeeingItem(map);
+            if (entity != null) {
+                destination = map.getAStar().findPath(currentPosition, new Point((int) entity.position.x, (int) entity.position.y), false);
+                if (destination != null) {
+                    currentStep = 0;
+                    action = MOVE;
+                }
+            }
         }
 
         if (destination != null) {
@@ -125,26 +139,28 @@ public class Bot extends Entity implements Playable {
                 currentStep++;
             }
 
-            if (currentPosition.x - newPosition.x == 1) {
-                direction = new Vec2(-1f, 0f);
-            } else if (currentPosition.x - newPosition.x == -1) {
-                direction = new Vec2(1f, 0f);
-            } else if (currentPosition.y - newPosition.y == 1) {
-                direction = new Vec2(0f, -1f);
-            } else if (currentPosition.y - newPosition.y == -1) {
-                direction = new Vec2(0f, 1f);
-            }
-
-            if (map.getTile((int) (position.x + direction.x * moveSpeed), (int) (position.y)) == null) {
-                position.x += direction.x * moveSpeed;
-            }
-
-            if (map.getTile((int) (position.x), (int) (position.y + direction.y * moveSpeed)) == null) {
-                position.y += direction.y * moveSpeed;
-            }
-
             if (currentStep >= destination.getLength()) {
                 destination = null;
+            } else {
+                if (currentPosition.x - newPosition.x == 1) {
+                    direction = new Vec2(-1f, 0f);
+                } else if (currentPosition.x - newPosition.x == -1) {
+                    direction = new Vec2(1f, 0f);
+                } else if (currentPosition.y - newPosition.y == 1) {
+                    direction = new Vec2(0f, -1f);
+                } else if (currentPosition.y - newPosition.y == -1) {
+                    direction = new Vec2(0f, 1f);
+                }
+
+                if (!map.isBurningAt(new Vec2(newPosition.x, newPosition.y))) {
+                    if (map.getTile((int) (position.x + direction.x * moveSpeed), (int) (position.y)) == null) {
+                        position.x += direction.x * moveSpeed;
+                    }
+
+                    if (map.getTile((int) (position.x), (int) (position.y + direction.y * moveSpeed)) == null) {
+                        position.y += direction.y * moveSpeed;
+                    }
+                }
             }
         }
 
@@ -178,7 +194,9 @@ public class Bot extends Entity implements Playable {
             }
             break;
         case MOVE:
-            action = NOTHING;
+            if (destination == null) {
+                action = NOTHING;
+            }
             break;
         case PLANT:
             if (destination == null) {
@@ -199,7 +217,20 @@ public class Bot extends Entity implements Playable {
             }
 
             p = p.add(direction);
-            System.out.println("seeingBomb");
+        }
+
+        return null;
+    }
+
+    private Entity isSeeingItem(Map map) {
+        Vec2 p = new Vec2(position);
+        while (map.getTile(p) == null) {
+            Entity entity = map.getItemAt(p);
+            if (entity != null) {
+                return entity;
+            }
+
+            p = p.add(direction);
         }
 
         return null;
@@ -207,32 +238,44 @@ public class Bot extends Entity implements Playable {
 
     private Path findDestinationToHide(Map map, Vec2 from, Vec2 bomb) {
         Point player = new Point((int) from.x, (int) from.y);
-        int tries = 0;
-
-        Point p = new Point(player.x + NumberGenerator.get().randomInt(-3, 3), player.y + NumberGenerator.get().randomInt(-3, 3));
-        Path path = map.getAStar().findPath(player, p, false);
-        while (path == null || p.x == (int) bomb.x || p.y == (int) bomb.y || map.getTile(p.x, p.y) != null) {
-            p = new Point(player.x + NumberGenerator.get().randomInt(-3, 3), player.y + NumberGenerator.get().randomInt(-3, 3));
-            path = map.getAStar().findPath(player, p, false);
-            tries++;
-
-            if (tries > 100) {
-                return null;
+        Path bestPath = null;
+        int distance = Integer.MAX_VALUE;
+        for (int x = -DISTANCE_HIDE; x < DISTANCE_HIDE; x++) {
+            for (int y = -DISTANCE_HIDE; y < DISTANCE_HIDE; y++) {
+                Point tile = new Point(player.x + x, player.y + y);
+                if (tile.x >= 0 && tile.x < map.getWidth() && tile.y >= 0 && tile.y < map.getHeight() && tile.x != (int) bomb.x
+                        && tile.y != (int) bomb.y && map.getTile(tile.x, tile.y) == null) {
+                    Path path = map.getAStar().findPath(player, tile, false);
+                    if (path != null && path.getLength() < distance) {
+                        bestPath = path;
+                        distance = path.getLength();
+                    }
+                }
             }
         }
 
-        return path;
+        return bestPath;
     }
 
     private Path findDestinationToPlant(Map map) {
         Point player = new Point((int) position.x, (int) position.y);
-
-        Point p = new Point(player.x + NumberGenerator.get().randomInt(-5, 5), player.y + NumberGenerator.get().randomInt(-5, 5));
-        if (map.getTile(p.x, p.y) != null || (!map.isDestroyed() && !map.hasBreakableNeighboors(p.x, p.y))) {
-            return null;
+        ArrayList<Point> bestTiles = new ArrayList<>();
+        int maxNeighboors = -1;
+        for (int x = -DISTANCE_PLANT; x < DISTANCE_PLANT; x++) {
+            for (int y = -DISTANCE_PLANT; y < DISTANCE_PLANT; y++) {
+                int neighboors = map.countBreakableNeighboors(player.x + x, player.y + y);
+                if (neighboors > maxNeighboors) {
+                    bestTiles.clear();
+                    bestTiles.add(new Point(player.x + x, player.y + y));
+                    maxNeighboors = neighboors;
+                } else if (neighboors == maxNeighboors) {
+                    bestTiles.add(new Point(player.x + x, player.y + y));
+                }
+            }
         }
 
-        return map.getAStar().findPath(player, p, false);
+        Point bestTile = bestTiles.get(NumberGenerator.get().randomInt(bestTiles.size()));
+        return map.getAStar().findPath(player, bestTile, false);
     }
 
     private Path findRandomDestination(Map map) {

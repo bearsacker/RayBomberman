@@ -164,7 +164,7 @@ public class Map {
     }
 
     public Entity getItemAt(Vec2 position) {
-        return (Bomb) entities.parallelStream()
+        return entities.parallelStream()
                 .filter(x -> x instanceof Item && ((Item) x).isBonus() && ((int) x.getPosition().x) == ((int) position.x)
                         && ((int) x.getPosition().y) == ((int) position.y))
                 .findFirst().orElse(null);
@@ -175,14 +175,20 @@ public class Map {
                 && ((int) x.getPosition().y) == ((int) position.y));
     }
 
-    public boolean hasBreakableNeighboors(int x, int y) {
+    public int countBreakableNeighboors(int x, int y) {
+        if (x < 0 || y < 0 || x >= width || y >= height) {
+            return -1;
+        }
+
         Wall left = getTile(x - 1, y);
         Wall right = getTile(x + 1, y);
         Wall top = getTile(x, y + 1);
         Wall bottom = getTile(x, y - 1);
 
-        return (left != null && left.isBreakable()) || (right != null && right.isBreakable()) || (top != null && top.isBreakable())
-                || (bottom != null && bottom.isBreakable());
+        return ((left != null && left.isBreakable()) ? 1 : 0)
+                + ((right != null && right.isBreakable()) ? 1 : 0)
+                + ((top != null && top.isBreakable()) ? 1 : 0)
+                + ((bottom != null && bottom.isBreakable()) ? 1 : 0);
     }
 
     public ArrayList<Vec2> getSpawns() {

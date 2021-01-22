@@ -32,6 +32,8 @@ public class MenuView extends View {
 
     private LinkButton playButton;
 
+    private LinkButton playArmageddonButton;
+
     private LinkButton quitButton;
 
     private Vec2 direction;
@@ -52,17 +54,29 @@ public class MenuView extends View {
 
         Mouse.setGrabbed(false);
 
-        playButton = new LinkButton("Play", WIDTH / 2, HEIGHT - 128);
+        playButton = new LinkButton("Normal mode", WIDTH / 2, HEIGHT - 128);
+        playButton.setColor(org.newdawn.slick.Color.yellow);
         playButton.setX(WIDTH / 2 - playButton.getWidth() / 2);
         playButton.setEvent(new Event() {
 
             @Override
             public void perform() throws Exception {
-                GUI.get().switchView(new FadeTransition(new GameView(), 1000));
+                GUI.get().switchView(new FadeTransition(new GameView("maps/01.map", false), 1000));
             }
         });
 
-        quitButton = new LinkButton("Quit", WIDTH / 2, HEIGHT - 80);
+        playArmageddonButton = new LinkButton("Armageddon mode", WIDTH / 2, HEIGHT - 96);
+        playArmageddonButton.setColor(org.newdawn.slick.Color.yellow);
+        playArmageddonButton.setX(WIDTH / 2 - playArmageddonButton.getWidth() / 2);
+        playArmageddonButton.setEvent(new Event() {
+
+            @Override
+            public void perform() throws Exception {
+                GUI.get().switchView(new FadeTransition(new GameView("maps/02.map", true), 1000));
+            }
+        });
+
+        quitButton = new LinkButton("Quit", WIDTH / 2, HEIGHT - 48);
         quitButton.setX(WIDTH / 2 - quitButton.getWidth() / 2);
         quitButton.setEvent(new Event() {
 
@@ -72,7 +86,7 @@ public class MenuView extends View {
             }
         });
 
-        add(playButton, quitButton);
+        add(playButton, playArmageddonButton, quitButton);
     }
 
     @Override
@@ -136,7 +150,7 @@ public class MenuView extends View {
         TextureImpl.bindNone();
 
         Images.LOGO.getImage().draw(WIDTH / 2 - Images.LOGO.getImage().getWidth() * 2, 0, 4f);
-        Images.BOMB.getImage().draw(WIDTH / 16, 64, 4f);
+        Images.BOMB.getImage().draw(0, 64, 4f);
 
         super.paint(g);
     }

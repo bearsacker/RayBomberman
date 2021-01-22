@@ -31,12 +31,13 @@ public class EndGameDialog extends SubView {
         text.setX(WIDTH / 2 - text.getWidth() / 2);
 
         retryButton = new LinkButton("Retry", WIDTH / 2 - 144, 208);
+        retryButton.setColor(Color.yellow);
         retryButton.setX(WIDTH / 2 - retryButton.getWidth() / 2);
         retryButton.setEvent(new Event() {
 
             @Override
             public void perform() throws Exception {
-                GUI.get().switchView(new FadeTransition(new GameView(), 1000));
+                GUI.get().switchView(new FadeTransition(new GameView(parent.getMapPath(), parent.isArmageddon()), 1000));
             }
         });
 
