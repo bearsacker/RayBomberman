@@ -126,6 +126,7 @@ public class MenuView extends View {
         TextureImpl.bindNone();
 
         Images.LOGO.getImage().draw(WIDTH / 2 - Images.LOGO.getImage().getWidth() * 2, 0, 4f);
+        Images.BOMB.getImage().draw(WIDTH / 16, 64, 4f);
 
         super.paint(g);
     }

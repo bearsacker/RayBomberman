@@ -53,6 +53,8 @@ public class Player implements Playable {
 
     private long lastUpdate;
 
+    private boolean dead;
+
     public Player(Vec2 position) {
         this.position = new Vec2(position);
         direction = new Vec2(.71f, .71f);
@@ -78,7 +80,7 @@ public class Player implements Playable {
             if (hiting && entity instanceof Bomb) {
                 entity.setDirection(direction);
             } else if (entity instanceof Fire) {
-                // TODO Death
+                dead = true;
             } else if (entity instanceof Item) {
                 ((Item) entity).use(this);
             }
@@ -252,6 +254,10 @@ public class Player implements Playable {
 
     public boolean isHiting() {
         return hiting;
+    }
+
+    public boolean isDead() {
+        return dead;
     }
 
 }

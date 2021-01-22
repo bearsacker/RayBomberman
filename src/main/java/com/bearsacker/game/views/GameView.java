@@ -35,6 +35,10 @@ public class GameView extends View {
 
     private MenuDialog menuDialog;
 
+    private EndGameDialog deathDialog;
+
+    private EndGameDialog winDialog;
+
     private Map map;
 
     private Player player;
@@ -48,6 +52,8 @@ public class GameView extends View {
     @Override
     public void start() throws Exception {
         menuDialog = new MenuDialog(this);
+        deathDialog = new EndGameDialog(this, "You are dead!");
+        winDialog = new EndGameDialog(this, "You win!");
 
         imageBuffer = new ImageBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, true);
         zBuffer = new double[SCREEN_WIDTH];
@@ -61,7 +67,7 @@ public class GameView extends View {
 
         Mouse.setGrabbed(true);
 
-        add(menuDialog);
+        add(menuDialog, deathDialog);
     }
 
     @Override
@@ -74,6 +80,12 @@ public class GameView extends View {
 
             if (GUI.get().isKeyPressed(KEY_ESCAPE)) {
                 menuDialog.setVisible(true);
+            }
+
+            if (player.isDead()) {
+                deathDialog.setVisible(true);
+            } else if (allBotsAreDead()) {
+                winDialog.setVisible(true);
             }
         }
     }
@@ -336,5 +348,9 @@ public class GameView extends View {
         }
 
         super.paint(g);
+    }
+
+    private boolean allBotsAreDead() {
+        return bots.stream().allMatch(x -> x.isToRemove());
     }
 }
