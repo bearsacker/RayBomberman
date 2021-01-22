@@ -1,4 +1,4 @@
-package com.bearsacker.game;
+package com.bearsacker.game.views;
 
 import static com.bearsacker.engine.opengl.OpenGL.createTextureFromBuffer;
 import static com.bearsacker.engine.opengl.OpenGL.drawRectangle;
@@ -18,12 +18,14 @@ import org.jbox2d.common.Vec2;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.Color;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.TextureImpl;
 
-import com.bearsacker.engine.Game;
 import com.bearsacker.engine.gui.GUI;
 import com.bearsacker.engine.gui.View;
+import com.bearsacker.engine.opengl.ImageBuffer;
+import com.bearsacker.game.Map;
+import com.bearsacker.game.Player;
+import com.bearsacker.game.Wall;
 import com.bearsacker.game.entities.Bot;
 import com.bearsacker.game.entities.Entity;
 import com.bearsacker.game.resources.Images;
@@ -314,7 +316,7 @@ public class GameView extends View {
         }
 
         g.setColor(org.newdawn.slick.Color.white);
-        GUI.get().getFont(1).drawString(16, SCREEN_HEIGHT * 2 - 32, player.getBombs() + " / " + player.getAvailableBombs());
+        GUI.get().getFont(1).drawString(16, SCREEN_HEIGHT * 2 - 32, player.getBombs() + " . " + player.getAvailableBombs());
         if (player.hasRedBomb()) {
             Images.REDBOMB.getImage().draw(64, SCREEN_HEIGHT * 2 - 70);
         } else {
@@ -324,7 +326,7 @@ public class GameView extends View {
         GUI.get().getFont(1).drawString(144, SCREEN_HEIGHT * 2 - 32, player.hasPowerBomb() ? "Inf" : "  " + player.getBombRange());
         Images.HUD_RANGE.getImage().draw(176, SCREEN_HEIGHT * 2 - 56);
 
-        GUI.get().getFont(1).drawString(16, 16, "Enemies ");
+        GUI.get().getFont().drawString(16, 16, "Enemies ");
         for (int i = 0; i < bots.size(); i++) {
             if (bots.get(i).isToRemove()) {
                 Images.PLAYER_FRONT_1.getImage().draw(128 + i * 24, 4, .5f, new org.newdawn.slick.Color(0f, 0f, 0f, .25f));
@@ -334,9 +336,5 @@ public class GameView extends View {
         }
 
         super.paint(g);
-    }
-
-    public static void main(String[] args) throws SlickException {
-        new Game(new GameView());
     }
 }

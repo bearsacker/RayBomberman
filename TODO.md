@@ -1,6 +1,5 @@
 Features:
-* Death
-* Menu
+* Death / Win screens
 * Rotated sprite
-* Colored bots
 * Sounds
+* Screen scale

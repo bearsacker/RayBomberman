@@ -11,6 +11,7 @@ import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glColor3f;
+import static org.lwjgl.opengl.GL11.glColor4f;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
@@ -20,7 +21,19 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 
 import java.nio.ByteBuffer;
 
+import org.newdawn.slick.Color;
+
 public class OpenGL {
+
+    public static void drawRectangle(int x, int y, int width, int height, Color color) {
+        glColor4f(color.r, color.g, color.b, color.a);
+        glBegin(GL_QUADS);
+        glVertex2f(x, y);
+        glVertex2f(x + width, y);
+        glVertex2f(x + width, y + height);
+        glVertex2f(x, y + height);
+        glEnd();
+    }
 
     public static void drawRectangle(int x, int y, int width, int height, int textureID) {
         glColor3f(1f, 1f, 1f);

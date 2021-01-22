@@ -55,8 +55,8 @@ public class Player implements Playable {
 
     public Player(Vec2 position) {
         this.position = new Vec2(position);
-        direction = new Vec2(-1f, 0f);
-        plane = new Vec2(0f, .66f);
+        direction = new Vec2(.71f, .71f);
+        plane = new Vec2(.46f, -.46f);
 
         speed = PLAYER_SPEED;
         availableBombs = 1;
@@ -84,15 +84,8 @@ public class Player implements Playable {
             }
         }
 
-        double rad = -toRadians(Mouse.getDX() / (WIDTH / 2f) * 90f);
-
-        float oldDirX = direction.x;
-        direction.x = (float) (direction.x * cos(rad) - direction.y * sin(rad));
-        direction.y = (float) (oldDirX * sin(rad) + direction.y * cos(rad));
-
-        float oldPlaneX = plane.x;
-        plane.x = (float) (plane.x * cos(rad) - plane.y * sin(rad));
-        plane.y = (float) (oldPlaneX * sin(rad) + plane.y * cos(rad));
+        double angle = -toRadians(Mouse.getDX() / (WIDTH / 2f) * 90f);
+        rotate(angle);
 
         if (GUI.get().getInput().isKeyDown(KEY_Z)) {
             if (map.getTile((int) (position.x + direction.x * moveSpeed), (int) (position.y)) == null) {
@@ -146,6 +139,16 @@ public class Player implements Playable {
                 map.getEntities().add(new Bomb(this, new Vec2(position), bombRange, hasRedBomb));
             }
         }
+    }
+
+    private void rotate(double angle) {
+        float oldDirX = direction.x;
+        direction.x = (float) (direction.x * cos(angle) - direction.y * sin(angle));
+        direction.y = (float) (oldDirX * sin(angle) + direction.y * cos(angle));
+
+        float oldPlaneX = plane.x;
+        plane.x = (float) (plane.x * cos(angle) - plane.y * sin(angle));
+        plane.y = (float) (oldPlaneX * sin(angle) + plane.y * cos(angle));
     }
 
     @Override
@@ -226,13 +229,13 @@ public class Player implements Playable {
     @Override
     public void decrementSpeed() {
         if (speed > PLAYER_SPEED) {
-            speed -= PLAYER_SPEED / 3f;
+            speed -= PLAYER_SPEED / 4f;
         }
     }
 
     @Override
     public void incrementSpeed() {
-        speed += PLAYER_SPEED / 3f;
+        speed += PLAYER_SPEED / 4f;
     }
 
     public Vec2 getPosition() {

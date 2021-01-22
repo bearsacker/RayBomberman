@@ -1,7 +1,5 @@
 package com.bearsacker.engine.gui;
 
-import static com.bearsacker.engine.configs.EngineConfig.HEIGHT;
-import static com.bearsacker.engine.configs.EngineConfig.WIDTH;
 import static com.bearsacker.engine.configs.GUIConfig.DEFAULT_TEXT_COLOR;
 import static com.bearsacker.engine.configs.GUIConfig.FONT;
 import static com.bearsacker.engine.configs.GUIConfig.FONT_SIZES;
@@ -21,8 +19,6 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.util.ResourceLoader;
 
-import com.bearsacker.engine.opengl.FrameBuffer;
-import com.bearsacker.engine.opengl.OpenGL;
 import com.bearsacker.engine.utils.FileLoader;
 
 
@@ -52,8 +48,6 @@ public class GUI {
 
     private ArrayList<Bindable> shaders;
 
-    private FrameBuffer frameBuffer;
-
     private HashMap<String, Color> colors;
 
     public static GUI get() {
@@ -61,8 +55,6 @@ public class GUI {
     }
 
     private GUI() {
-        frameBuffer = new FrameBuffer(WIDTH, HEIGHT);
-
         shaders = new ArrayList<>();
         colors = new HashMap<>();
         fonts = new ArrayList<>();
@@ -125,17 +117,19 @@ public class GUI {
         }
     }
 
+    public void switchView(Transition transition) {
+        try {
+            currentView = transition;
+            currentView.start();
+        } catch (Exception e) {
+            switchView(new ViewException(e));
+        }
+    }
+
     public void paint(Graphics g) {
         try {
             if (currentView != null) {
-                frameBuffer.bind();
                 currentView.paint(g);
-                frameBuffer.unbind();
-
-                shaders.forEach(x -> x.bind());
-                OpenGL.drawRectangle(0, frameBuffer.getHeight(), frameBuffer.getWidth(), -frameBuffer.getHeight(),
-                        frameBuffer.getTextureId());
-                shaders.forEach(x -> x.unbind());
             }
         } catch (Exception e) {
             switchView(new ViewException(e));
@@ -249,6 +243,10 @@ public class GUI {
         }
 
         return null;
+    }
+
+    public View getCurrentView() {
+        return currentView;
     }
 
     public static void drawTiledImage(Image image, Color filter, int width, int height, int spriteWidth, int spriteHeight, int borderSize) {

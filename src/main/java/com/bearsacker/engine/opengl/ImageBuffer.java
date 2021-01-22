@@ -1,4 +1,4 @@
-package com.bearsacker.game;
+package com.bearsacker.engine.opengl;
 
 import org.lwjgl.util.Color;
 

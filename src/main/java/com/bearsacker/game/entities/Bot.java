@@ -316,12 +316,12 @@ public class Bot extends Entity implements Playable {
     @Override
     public void decrementSpeed() {
         if (speed > PLAYER_SPEED) {
-            speed -= PLAYER_SPEED / 3f;
+            speed -= PLAYER_SPEED / 4f;
         }
     }
 
     @Override
     public void incrementSpeed() {
-        speed += PLAYER_SPEED / 3f;
+        speed += PLAYER_SPEED / 4f;
     }
 }

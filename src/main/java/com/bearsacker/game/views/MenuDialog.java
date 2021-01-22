@@ -1,4 +1,4 @@
-package com.bearsacker.game;
+package com.bearsacker.game.views;
 
 
 import static com.bearsacker.engine.configs.EngineConfig.HEIGHT;
@@ -9,31 +9,33 @@ import static org.newdawn.slick.Input.KEY_ESCAPE;
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.Graphics;
 
-import com.bearsacker.engine.gui.Button;
 import com.bearsacker.engine.gui.Event;
 import com.bearsacker.engine.gui.GUI;
+import com.bearsacker.engine.gui.LinkButton;
 import com.bearsacker.engine.gui.SubView;
 
 
 public class MenuDialog extends SubView {
 
-    private Button backToMenuButton;
+    private LinkButton backToMenuButton;
 
-    private Button quitButton;
+    private LinkButton quitButton;
 
     public MenuDialog(GameView parent) throws Exception {
         super(parent);
 
-        backToMenuButton = new Button("Back to menu", WIDTH / 2 - 144, 144, 288, 48);
+        backToMenuButton = new LinkButton("Back to menu", WIDTH / 2 - 144, 144);
+        backToMenuButton.setX(WIDTH / 2 - backToMenuButton.getWidth() / 2);
         backToMenuButton.setEvent(new Event() {
 
             @Override
             public void perform() throws Exception {
-                // GUI.get().switchView(new MenuView());
+                GUI.get().switchView(new MenuView());
             }
         });
 
-        quitButton = new Button("Quit", WIDTH / 2 - 144, 208, 288, 48);
+        quitButton = new LinkButton("Quit", WIDTH / 2 - 144, 208);
+        quitButton.setX(WIDTH / 2 - quitButton.getWidth() / 2);
         quitButton.setEvent(new Event() {
 
             @Override
