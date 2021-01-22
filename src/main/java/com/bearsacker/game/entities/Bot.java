@@ -199,6 +199,7 @@ public class Bot extends Entity implements Playable {
             }
 
             p = p.add(direction);
+            System.out.println("seeingBomb");
         }
 
         return null;

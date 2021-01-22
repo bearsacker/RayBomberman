@@ -42,7 +42,7 @@ public class FadeTransition extends Transition {
         case 1:
             to.update();
             break;
-        case 2:
+        default:
             to.focused = true;
             GUI.get().switchView(to);
             break;
