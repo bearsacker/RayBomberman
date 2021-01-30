@@ -3,8 +3,10 @@ package com.bearsacker.engine.gui;
 import static com.bearsacker.engine.configs.EngineConfig.HEIGHT;
 import static com.bearsacker.engine.configs.EngineConfig.WIDTH;
 
+import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.opengl.renderer.SGL;
 
 public class FadeTransition extends Transition {
 
@@ -43,8 +45,8 @@ public class FadeTransition extends Transition {
             to.update();
             break;
         default:
+            GUI.get().setCurrentView(to);
             to.focused = true;
-            GUI.get().switchView(to);
             break;
         }
     }
@@ -64,6 +66,9 @@ public class FadeTransition extends Transition {
 
         g.setColor(new Color(0f, 0f, 0f, step == 0 ? alpha : 1f - alpha));
         g.fillRect(0, 0, WIDTH, HEIGHT);
+
+        // ???
+        GL11.glEnable(SGL.GL_TEXTURE_2D);
     }
 
 }

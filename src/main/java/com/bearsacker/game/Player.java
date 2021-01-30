@@ -66,6 +66,10 @@ public class Player implements Playable {
         bombRange = 1;
     }
 
+    public void reset() {
+        lastUpdate = System.currentTimeMillis();
+    }
+
     public void update(Map map) {
         long time = System.currentTimeMillis();
         float frameTime = (time - lastUpdate) / 1000f;

@@ -62,6 +62,8 @@ public class GameView extends View {
 
     @Override
     public void start() throws Exception {
+        Mouse.setGrabbed(true);
+
         menuDialog = new MenuDialog(this);
         deathDialog = new EndGameDialog(this, "You are dead!");
         winDialog = new EndGameDialog(this, "You win!");
@@ -81,9 +83,7 @@ public class GameView extends View {
             bots.get(bots.size() - 1).pickUpPowerBomb();
         }
 
-        Mouse.setGrabbed(true);
-
-        add(menuDialog, deathDialog);
+        add(menuDialog, deathDialog, winDialog);
     }
 
     @Override
@@ -103,6 +103,8 @@ public class GameView extends View {
             } else if (allBotsAreDead()) {
                 winDialog.setVisible(true);
             }
+        } else {
+            player.reset();
         }
     }
 

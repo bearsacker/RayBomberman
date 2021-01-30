@@ -249,6 +249,10 @@ public class GUI {
         return null;
     }
 
+    public void setCurrentView(View view) {
+        currentView = view;
+    }
+
     public View getCurrentView() {
         return currentView;
     }
