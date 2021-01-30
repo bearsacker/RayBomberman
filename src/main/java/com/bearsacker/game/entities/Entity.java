@@ -13,6 +13,8 @@ public abstract class Entity {
 
     protected Images sprite;
 
+    protected boolean blink;
+
     public Entity(Images sprite, Vec2 position) {
         this.sprite = sprite;
         this.position = new Vec2(((int) position.x) + .5f, ((int) position.y) + .5f);
@@ -36,6 +38,14 @@ public abstract class Entity {
 
     public Images getSprite() {
         return sprite;
+    }
+
+    public boolean isBlinking() {
+        return blink;
+    }
+
+    public void setBlink(boolean blink) {
+        this.blink = blink;
     }
 
     public abstract void update(Map map);

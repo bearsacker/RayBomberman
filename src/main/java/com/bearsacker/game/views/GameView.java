@@ -321,6 +321,10 @@ public class GameView extends View {
                                 && ty < entity.getSprite().getImage().getHeight()) {
                             Color spriteColor = entity.getSprite().getPixel(tx, ty);
                             imageBuffer.addToPixel(stripe, y, spriteColor);
+
+                            if (entity.isBlinking() && spriteColor.getAlpha() > 0f) {
+                                imageBuffer.addToPixel(stripe, y, new Color(255, 255, 255, 192));
+                            }
                         }
                     }
                 }

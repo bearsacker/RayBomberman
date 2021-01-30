@@ -43,7 +43,11 @@ public class Bomb extends Entity {
 
         float moveSpeed = frameTime * BOMB_SPEED;
 
-        if (map.isBurningAt(position) || time - plantTime > BOMB_TIME) {
+        long diffTime = time - plantTime;
+        setBlink((diffTime > 500 && diffTime < 600) || (diffTime > 1000 && diffTime < 1200) || (diffTime > 1500 && diffTime < 1700)
+                || (diffTime > (BOMB_TIME - 1000)));
+
+        if (map.isBurningAt(position) || diffTime > BOMB_TIME) {
             explode(map);
         } else if (direction != null) {
             if (map.getTile((int) (position.x + direction.x * moveSpeed), (int) (position.y)) == null) {
