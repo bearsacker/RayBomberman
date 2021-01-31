@@ -5,10 +5,13 @@ import static com.bearsacker.game.configs.GameConfig.PLAYER_SPEED;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
+import static org.newdawn.slick.Input.KEY_A;
 import static org.newdawn.slick.Input.KEY_D;
 import static org.newdawn.slick.Input.KEY_E;
 import static org.newdawn.slick.Input.KEY_Q;
 import static org.newdawn.slick.Input.KEY_S;
+import static org.newdawn.slick.Input.KEY_SPACE;
+import static org.newdawn.slick.Input.KEY_W;
 import static org.newdawn.slick.Input.KEY_Z;
 import static org.newdawn.slick.Input.MOUSE_LEFT_BUTTON;
 
@@ -96,7 +99,7 @@ public class Player implements Playable {
         double angle = -toRadians(Mouse.getDX() / (WIDTH / 2f) * 90f);
         rotate(angle);
 
-        if (GUI.get().getInput().isKeyDown(KEY_Z)) {
+        if (GUI.get().getInput().isKeyDown(KEY_Z) || GUI.get().getInput().isKeyDown(KEY_W)) {
             if (map.getTile((int) (position.x + direction.x * moveSpeed), (int) (position.y)) == null) {
                 position.x += direction.x * moveSpeed;
             }
@@ -112,7 +115,7 @@ public class Player implements Playable {
             }
         }
 
-        if (GUI.get().getInput().isKeyDown(KEY_Q)) {
+        if (GUI.get().getInput().isKeyDown(KEY_Q) || GUI.get().getInput().isKeyDown(KEY_A)) {
             Vec2 newDirection = new Vec2(direction);
             float oldX = newDirection.x;
             newDirection.x = (float) (newDirection.x * cos(ANGLE_LEFT) - newDirection.y * sin(ANGLE_LEFT));
@@ -138,7 +141,7 @@ public class Player implements Playable {
             }
         }
 
-        if (GUI.get().isKeyPressed(KEY_E) && bombs > 0) {
+        if ((GUI.get().isKeyPressed(KEY_E) || GUI.get().isKeyPressed(KEY_SPACE)) && bombs > 0) {
             bombs--;
             Sounds.PLANT.getSound().play();
 
