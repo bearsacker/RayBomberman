@@ -180,6 +180,10 @@ public class Map {
             return -1;
         }
 
+        if (getTile(x, y) != null) {
+            return -1;
+        }
+
         Wall left = getTile(x - 1, y);
         Wall right = getTile(x + 1, y);
         Wall top = getTile(x, y + 1);

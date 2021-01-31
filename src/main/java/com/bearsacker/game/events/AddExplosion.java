@@ -29,8 +29,8 @@ public class AddExplosion implements Event {
     public void perform(Map map, Player player) {
         float distanceFromPlayer = (player.getPosition().x - position.x) * (player.getPosition().x - position.x)
                 + (player.getPosition().y - position.y) * (player.getPosition().y - position.y);
-        if (distanceFromPlayer < 100f) {
-            Sounds.EXPLOSION.getSound().play(1f, (100f - distanceFromPlayer) / 100f);
+        if (distanceFromPlayer < 200f) {
+            Sounds.EXPLOSION.getSound().play(1f, (200f - distanceFromPlayer) / 200f);
         }
 
         if (isPowerBomb) {
