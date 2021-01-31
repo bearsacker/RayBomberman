@@ -84,6 +84,7 @@ public class Player implements Playable {
         for (Entity entity : entities) {
             if (hiting && entity instanceof Bomb) {
                 entity.setDirection(direction);
+                Sounds.PLANT.getSound().play();
             } else if (entity instanceof Fire) {
                 dead = true;
             } else if (entity instanceof Item) {
