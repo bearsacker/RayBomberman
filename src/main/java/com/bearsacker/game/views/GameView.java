@@ -92,7 +92,7 @@ public class GameView extends View {
 
         if (focused) {
             player.update(map);
-            map.update();
+            map.update(player);
 
             if (GUI.get().isKeyPressed(KEY_ESCAPE)) {
                 menuDialog.setVisible(true);

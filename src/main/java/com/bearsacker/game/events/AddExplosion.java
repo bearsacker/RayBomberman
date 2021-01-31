@@ -3,8 +3,10 @@ package com.bearsacker.game.events;
 import org.jbox2d.common.Vec2;
 
 import com.bearsacker.game.Map;
+import com.bearsacker.game.Player;
 import com.bearsacker.game.Wall;
 import com.bearsacker.game.entities.Fire;
+import com.bearsacker.game.resources.Sounds;
 
 public class AddExplosion implements Event {
 
@@ -24,7 +26,13 @@ public class AddExplosion implements Event {
     }
 
     @Override
-    public void perform(Map map) {
+    public void perform(Map map, Player player) {
+        float distanceFromPlayer = (player.getPosition().x - position.x) * (player.getPosition().x - position.x)
+                + (player.getPosition().y - position.y) * (player.getPosition().y - position.y);
+        if (distanceFromPlayer < 100f) {
+            Sounds.EXPLOSION.getSound().play(1f, (100f - distanceFromPlayer) / 100f);
+        }
+
         if (isPowerBomb) {
             range = Integer.MAX_VALUE;
         }

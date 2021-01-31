@@ -3,6 +3,7 @@ package com.bearsacker.game.events;
 import org.jbox2d.common.Vec2;
 
 import com.bearsacker.game.Map;
+import com.bearsacker.game.Player;
 import com.bearsacker.game.items.BombBonusItem;
 import com.bearsacker.game.items.BombMalusItem;
 import com.bearsacker.game.items.GloveItem;
@@ -24,7 +25,7 @@ public class AddItem implements Event {
     }
 
     @Override
-    public void perform(Map map) {
+    public void perform(Map map, Player player) {
         Items type = Items.getRandomItem();
         Item item = null;
 

@@ -76,10 +76,10 @@ public class Map {
         aStar = new AStar(this, width * height);
     }
 
-    public void update() {
+    public void update(Player player) {
         if (!events.isEmpty()) {
             Event event = events.pop();
-            event.perform(this);
+            event.perform(this, player);
         }
 
         destroyed = updateDestroyed();

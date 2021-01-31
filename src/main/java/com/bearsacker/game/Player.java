@@ -22,6 +22,7 @@ import com.bearsacker.game.entities.Bomb;
 import com.bearsacker.game.entities.Entity;
 import com.bearsacker.game.entities.Fire;
 import com.bearsacker.game.items.Item;
+import com.bearsacker.game.resources.Sounds;
 
 public class Player implements Playable {
 
@@ -87,6 +88,7 @@ public class Player implements Playable {
                 dead = true;
             } else if (entity instanceof Item) {
                 ((Item) entity).use(this);
+                Sounds.PICKUP.getSound().play();
             }
         }
 
@@ -137,6 +139,8 @@ public class Player implements Playable {
 
         if (GUI.get().isKeyPressed(KEY_E) && bombs > 0) {
             bombs--;
+            Sounds.PLANT.getSound().play();
+
             if (map.getTile((int) (position.x + direction.x / 2f), (int) (position.y)) == null
                     && map.getTile((int) (position.x), (int) (position.y + direction.y / 2f)) == null) {
                 map.getEntities()

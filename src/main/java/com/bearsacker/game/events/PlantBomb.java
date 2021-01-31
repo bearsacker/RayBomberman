@@ -4,6 +4,7 @@ import org.jbox2d.common.Vec2;
 
 import com.bearsacker.game.Map;
 import com.bearsacker.game.Playable;
+import com.bearsacker.game.Player;
 import com.bearsacker.game.entities.Bomb;
 
 public class PlantBomb implements Event {
@@ -24,7 +25,7 @@ public class PlantBomb implements Event {
     }
 
     @Override
-    public void perform(Map map) {
-        map.getEntities().add(new Bomb(player, position, bombRange, isRedBomb));
+    public void perform(Map map, Player player) {
+        map.getEntities().add(new Bomb(this.player, position, bombRange, isRedBomb));
     }
 }

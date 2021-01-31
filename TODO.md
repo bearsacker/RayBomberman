@@ -1,3 +1,0 @@
-Features:
-* Rotated sprite
-* Sounds

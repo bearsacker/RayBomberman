@@ -16,6 +16,7 @@ import com.bearsacker.engine.gui.GUI;
 import com.bearsacker.engine.gui.LinkButton;
 import com.bearsacker.engine.gui.SubView;
 import com.bearsacker.engine.gui.Text;
+import com.bearsacker.game.resources.Sounds;
 
 
 public class EndGameDialog extends SubView {
@@ -57,6 +58,7 @@ public class EndGameDialog extends SubView {
     @Override
     public void onShow() throws Exception {
         Mouse.setGrabbed(false);
+        Sounds.END.getSound().play();
     }
 
     @Override
